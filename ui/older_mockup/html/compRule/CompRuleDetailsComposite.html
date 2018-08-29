@@ -1,0 +1,107 @@
+		<h1 align="center">Compensation Rule Details</h1>
+		<table border=1>
+			<tr>
+				<td>Rule name :</td>
+				<td><input type="text" size=50 value="High Performance"></input></td>
+			</tr>
+			<tr>
+				<td valign="top">Description :</td>
+				<td valign="top"><textarea rows="4" cols="50"
+						style="vertical-align: top">Compensation rule for high performers</textarea>
+				</td>
+			</tr>
+			<td>Rule type :</td>
+			<td><input type="radio">Simple</input>&nbsp;&nbsp;&nbsp;&nbsp;<input
+				type="radio" checked="true">Composite</input></td>
+			<tr>
+				<td>Rules connected as :</td>
+				<td><input type="radio">All</input>&nbsp;&nbsp;&nbsp;&nbsp;<input
+					type="radio" checked="true">Any</input></td>
+			</tr>
+			<tr>
+				<td valign="top">List of Rules :</td>
+				<td>
+					<table>
+						<tr>
+							<td>
+								<select>
+									<option value="volvo">Sales Perfornance</option>
+									<option value="saab">Order Booking</option>
+									<option value="mercedes">Max Order Booking</option>
+									<option value="audi">Max Order count</option>
+									<option value="audi" selected="selected"><b>Top Ranks</b></option>
+								</select>
+								<a href="#">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<select>
+									<option value="volvo" selected="selected">Sales Perfornance</option>
+									<option value="saab">Order Booking</option>
+									<option value="mercedes">Max Order Booking</option>
+									<option value="audi">Max Order count</option>
+									<option value="audi"><b>Top Ranks</b></option>
+								</select>
+								<a href="#">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<select>
+									<option value="volvo">Sales Perfornance</option>
+									<option value="saab" selected="selected">Order Booking</option>
+									<option value="mercedes">Max Order Booking</option>
+									<option value="audi">Max Order count</option>
+									<option value="audi"><b>Top Ranks</b></option>
+								</select>
+								<a href="#">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a href="#">Add row</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Compensation 
+				</td>
+				<td></td>
+			</tr>
+			<tr><td></td><td>
+			<table>
+			<tr>
+				<td><input type="radio">Fixed</input>
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td>
+					<input type="text" size="20"></input>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top"><input type="radio" checked="true">Variable</input>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					Apply formula <input type="text" size="20"></input><br>
+					Parameters <input type="text" size="20"></input><br>
+					(Use RULE_OUTPUT_DATA{n} or RULE_EVALUATION_RESULT{n} for the result of the rule evaluation.)
+				</td>
+			</tr>
+			</table>
+			</td></tr>
+		</table>
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+	</script>
+	</div>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<States>
+	<State stateName="Andhra Pradesh">
+	<stateCode>100</stateCode>
+	</State>
+	<State stateName="Bihar">
+	<stateCode>200</stateCode>
+	</State>
+	<State stateName="Gujarat">
+	<stateCode>300</stateCode>
+	</State>
+	<State stateName="Karnataka">
+	<stateCode>400</stateCode>
+	</State>
+	<State stateName="Maharashtra">
+	<stateCode>500</stateCode>
+	</State>
+	<State stateName="Punjab">
+	<stateCode>600</stateCode>
+	</State>
+	<State stateName="Uttar Pradesh">
+	<stateCode>700</stateCode>
+	</State>
+	<State stateName="West Bengal">
+	<stateCode>800</stateCode>
+	</State>
+</States>

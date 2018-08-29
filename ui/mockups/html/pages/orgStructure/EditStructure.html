@@ -1,0 +1,36 @@
+		<h1 align="center">Role Details</h1>
+		<form>
+			<table border=0 align="center">
+				<tr>
+					<td>Role Name:</td>
+					<td><input type="text" name="fname" value="TESTER"></td>
+				</tr>
+				<tr>
+					<td>Description:</td>
+					<td><textarea rows="4" cols="50">Software Testing</textarea></td>
+				</tr>
+				<tr>
+					<td>Reports To:</td>
+					<td>CEO
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div>
+						@@TARGETCONTENT@@
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><input type="submit" value="Update"> <input
+						type="submit" value="Add New Parameter">
+						<script>
+							showCancel();
+							$("#setTarget").load("components/setTarget.html");
+							$("#rolePicker").load("components/rolePicker.html");
+					</script>
+		</td>
+				</tr>
+			</table>
+		</form>

@@ -1,0 +1,53 @@
+<h1 align="center">Organization Structure</h1>
+<table width="500">
+<tr width="80%"><td></td><td width="20%"></td>
+<tr><td align="left">
+<ul class="non-bullet">
+     <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>CEO</a></span><ul class="non-bullet">
+        <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>VP Finance</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>VP Operations</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>VP Sales</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>VPEngineering</a></span><ul class="non-bullet">
+            <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>Director QA</a></span></li>
+            <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>Director Development</a></span></li>
+            <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>Director Project Management</a></span><ul class="non-bullet">
+           		 <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>Analyst I</a></span></li>
+           		 <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>Analyst II</a></span></li>
+            	 <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>MANAGER Project Management</a></span></li>
+            	 <li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>SR.PROJECT MANAGER</a></span><ul class="non-bullet">
+           		 	<li><span class="Collapsable">- &nbsp; <a href='#' onclick='clickLink();'>PROJECT MANAGER</a></span></li>
+           		 		<li><span >- &nbsp;<a href='#' onclick='clickLink();'>TEAM LEADER</a></span></li>
+            	 		<li><span >- &nbsp;<a href='#' onclick='clickLink();'>Sr. TEAM LEADER</a></span></li>
+            	 		<li><span >- &nbsp;<a href='#' onclick='clickLink();'>SOFTWARE DEVELOPER</a></span></li>
+            	 		<li><span >- &nbsp;<a href='#' onclick='clickLink();'>TESTER</a></span></li>
+        	</ul>
+        	</li>
+        	</ul>
+        	</li>
+        	</ul>
+        </li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    </ul>
+    </td>
+    <td>&nbsp;</td>
+    </tr>
+</table>
+    <script>
+    $(".Collapsable").click(function () {
+        $(this).parent().children().toggle();
+        $(this).toggle();
+        $(this).html($(this).html().startsWith('+') ? $(this).html().replace('+','-') : $(this).html().replace('-','+'));
+    });
+		function clickLink() {
+			var showMenuParam = getUrlVars()["showMenu"];
+			if (showMenuParam != 'no') {
+				window.location = '../../pages/orgStructure/EditStructure.html';
+			} else {
+				close();
+			}
+		}
+	</script>
+    

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Targets>
+	<Target targetName="tgt_1">
+	<displayName>Minimum Sales</displayName>
+	</Target>
+	<Target targetName="tgt_2">
+	<displayName>Service Amount</displayName>
+	</Target>
+	<Target targetName="tgt_3">
+	<displayName>Promotional Sales</displayName>
+	</Target>	
+	<Target targetName="tgt_4">
+	<displayName>New Product Sales</displayName>
+	</Target>
+	<Target targetName="tgt_5">
+	<displayName>Sale Remotely</displayName>
+	</Target>
+</Targets>

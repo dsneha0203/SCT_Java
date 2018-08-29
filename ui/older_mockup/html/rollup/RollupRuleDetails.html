@@ -1,0 +1,134 @@
+		<h1 align="center">Rollup Rule Details</h1>
+		<table border=1>
+			<tr>
+				<td>Rule name :</td>
+				<td><input type="text" size=50 value="Manager rollup"></input></td>
+			</tr>
+			<tr>
+				<td valign="top">Description :</td>
+				<td valign="top"><textarea rows="4" cols="50"
+						style="vertical-align: top">Rollup data for managers</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>Rollup Plan validity :
+				</td>
+				<td>
+					From <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>
+					To <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>
+				</td>
+			</tr>
+			<tr>
+			<td valign="top">Applies when :</td>
+			<td>
+				<table>
+					<tr><td>Field</td><td>Condition</td><td>Value</td></tr>
+					<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<select>
+									<option value="volvo">Customer Name</option>
+									<option value="saab" selected="selected">Order Total</option>
+									<option value="mercedes">Discount %</option>
+								</select>
+						</td><td>
+								<input type="checkbox" value="Not">Not</input>
+								<select>
+									<option value="volvo">Equals</option>
+									<option value="mercedes">Greater Than</option>
+									<option value="mercedes">Less Than</option>
+									<option value="volvo">Like</option>
+								</select>
+						</td><td>
+								<input type="text" size="20"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td>And 
+								<select>
+									<option value="volvo">Customer Name</option>
+									<option value="saab">Order Total</option>
+									<option value="mercedes" selected="selected">Discount %</option>
+								</select>
+						</td><td>
+								<input type="checkbox" value="Not">Not</input>
+								<select>
+									<option value="volvo">Equals</option>
+									<option value="mercedes">Greater Than</option>
+									<option value="mercedes">Less Than</option>
+									<option value="volvo">Like</option>
+								</select>
+						</td><td>
+								<input type="text" size="20"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td></td><td></td><td><a href="#">Add</a></td></tr>
+				</table>
+				
+			</td>
+			</tr>
+			<tr>
+			<td valign="top">Rollup Percentage :</td>
+			<td>
+				<table>
+					<tr><td>Field</td><td>Multiplier</td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo">Quantity</option>
+									<option value="saab" selected="selected">Order Total</option>
+									<option value="mercedes">Service Total</option>
+								</select>
+						</td><td>
+								<input type="text" size="5" value=".1"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo" selected="selected">Quantity</option>
+									<option value="saab">Order Total</option>
+									<option value="mercedes">Service Total</option>
+								</select>
+						</td><td>
+								<input type="text" size="5" value=".01"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td></td><td><a href="#">Add</a></td></tr>
+				</table>
+				
+			</td>
+			</tr>
+			<tr>
+			<td valign="top">Beneficiary roles :</td>
+			<td>
+				<table>
+					<tr>
+						<td valign="top"><input type="radio" checked="checked">Hierarchy</input></td>
+						<td valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>Starting <input type="text" size="10"></input> level up<br>
+							Ending &nbsp;<input type="text" size="10"></input> level up
+						</td>
+					</tr>
+					<tr><td colspan="3">&nbsp;</td></tr>
+					<tr>
+						<td valign="top"><input type="radio">Contributor</input></td>
+						<td valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td align="left">
+								<select>
+									<option value="volvo">Systems Engineer</option>
+									<option value="saab">Analyst</option>
+									<option value="mercedes" selected="selected">Management support</option>
+								</select>
+						</td>
+					</tr>
+				</table>
+			</td>
+			</tr>
+		</table>
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+	</script>

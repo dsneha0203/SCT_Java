@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<Rules>
+
+	<Rule RuleName="Rule for getting incentive to top saler of company">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer</Description>
+		<CompensationType>Variable</CompensationType>
+		<CompensationValue>0</CompensationValue>
+		<CompensationFormula>Param 1 * .6 + Param 2 * .7 - Param 3</CompensationFormula>
+		<CompensationParameter>Param 1,Param 2,Param 3</CompensationParameter>
+	 	<!--<RuleParameters>
+			<RuleParameter ParameterName="Param 1">
+				<ParameterValue>600</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 2">
+				<ParameterValue>4300</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 3">
+				<ParameterValue>1750</ParameterValue>
+			</RuleParameter>
+		</RuleParameters>    -->
+		<RuleComposite>
+			<RuleType>c</RuleType>
+			<ConnectionType>all</ConnectionType>
+			<ListOfRule>
+			<SimpleRule simpleRuleName = "Rule for getting commission on max sale of computer"></SimpleRule>
+			<SimpleRule simpleRuleName = "Rule for getting commission on top sale of hp laptop"></SimpleRule>
+			</ListOfRule>
+			</RuleComposite>
+	</Rule>
+	
+	<Rule RuleName="Rule for getting commission to top saler of smart devices">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer</Description>
+		<CompensationType>Fixed</CompensationType>
+		<CompensationValue>20000</CompensationValue>
+		<CompensationFormula>null</CompensationFormula>
+		<CompensationParameter>null</CompensationParameter>
+	 	<!-- <RuleParameters>
+			<RuleParameter ParameterName="Param 89">
+				<ParameterValue>600</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 26">
+				<ParameterValue>4300</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 32">
+				<ParameterValue>1750</ParameterValue>
+			</RuleParameter>
+		</RuleParameters>   -->
+		<RuleComposite>
+			<RuleType>c</RuleType>
+			<ConnectionType>any</ConnectionType>
+			<ListOfRule>
+			<SimpleRule simpleRuleName = "Rule for getting commission on sale of new smart phone"></SimpleRule>
+			<SimpleRule simpleRuleName = "Rule for getting commission on max sale of simcard"></SimpleRule>
+			</ListOfRule>
+			</RuleComposite>
+	</Rule>
+	</Rules>

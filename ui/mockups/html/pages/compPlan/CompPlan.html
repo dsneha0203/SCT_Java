@@ -1,0 +1,139 @@
+		<h1 align="center">Compensation Plan Assignment</h1>
+		<table>
+			<tr><td>
+				<table>
+					<tr>
+						<td><input type="radio">Employee</input><br>
+						Select Employee : Selected Employee
+						<script>
+							printChooseEmployee();
+						</script>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Or</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><input type="radio" checked="checked">Role</input><br>
+						Select Role :
+								<select>
+									<option value="volvo">Systems Engineer</option>
+									<option value="saab">Analyst</option>
+									<option value="mercedes" selected="selected">Management support</option>
+								</select>
+						
+						</td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td>&nbsp;</td></tr>			
+				</table>
+			
+				<h3>Selected Rule </h3> 
+				<table border="1">
+					<thead>
+						<tr>
+							<td>Rule Id</td>
+							<td>Rule Details</td>
+							<td>Fixed</td>
+							<td>Repeats</td>
+							<td>From</td>
+							<td>To</td>
+							<td>&nbsp;Parameter&nbsp;|&nbsp;&nbsp;Default value|&nbsp;&nbsp;&nbsp;&nbsp;Overwrite</td>
+							
+							
+						</tr>
+					</thead>
+					<tr>
+					<td valign="top"><a href="../../pages/compRule/CompRuleDetailsComposite.html">P001</a>
+						<b>|</b><a href="#">X</a><b>|</b></td>
+					<td valign="top">
+					<table border="0">
+							<tr>
+								<td valign="top">High Performance
+								</td>
+							</tr>
+							<tr>
+							<td valign="top">Compensation rule for high performers
+							</td>
+							</tr>
+						</table></td>
+						<td valign="center"><input type="radio"></td>
+						<td valign="center"><input type="radio"><select>
+									<option value="volvo">Weekly</option>
+									<option value="saab">Fortnightly</option>
+									<option value="mercedes" selected="selected">Monthly</option>
+									<option value="saab">Quarterly</option>
+									<option value="saab">Annually</option>
+								</select></td>
+								<td><input type="text"></input>
+							<script>
+								printChooseCal();
+							</script></td><td><input type="text"></input>
+							<script>
+								printChooseCal();
+							</script></td>
+					<td> 
+						<div>@@PLANPARAMETER@@</div>
+					</td>	
+					</tr>
+					<tr>
+						<td valign="top"><a href="../../pages/compRule/CompRuleDetailsSimpleRank.html">P002</a>
+					<b>|</b><a href="#">X</a><b>|</b></td>
+						<td valign="top"><table border="0">
+							<tr>
+				
+								<td valign="top">Max Order booking
+								</td>
+							</tr>
+							<tr>
+							<td valign="top">Compensation rule for maximum order booking
+							</td>
+							</tr>
+						</table></td>
+						<td valign="center"><input type="radio"></td>
+						<td valign="center"><input type="radio"><select>
+									<option value="volvo">Weekly</option>
+									<option value="saab">Fortnightly</option>
+									<option value="mercedes">Monthly</option>
+									<option value="saab">Quarterly</option>
+									<option value="saab" selected="selected">Annually</option>
+								</select></td>
+								<td><input type="text"></input>
+							<script>
+								printChooseCal();
+							</script></td><td><input type="text"></input>
+							<script>
+								printChooseCal();
+							</script></td>
+						<td>
+							<div>@@PLANPARAMETER@@</div>
+						
+						</td>
+					</tr>
+					<div >
+					<tr>
+						<td colspan="4" align="right"> <select><option value = "1">---select rule id----</option>
+									<option value = "2">P001</option>
+									<option value = "1">P002</option>
+									<option value = "1">P003</option>
+									<option value = "1">P004</option>
+							</select>
+						
+							<td colspan="5" align="right"><a href="#">Add new</a></td>
+						</td>
+					</tr>
+					
+					
+				
+				</table>
+			</td></tr>
+		</table>
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+		$("#planParameter1").load("components/planParameters.html");
+		$("#planParameter2").load("components/planParameters.html");
+	</script>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Frequencies>
+	<Frequency frequencyName="weekly">
+	</Frequency>
+	<Frequency frequencyName="monthly">
+	</Frequency>
+	<Frequency frequencyName="quaterly">
+	</Frequency>
+	<Frequency frequencyName="half-yearly">
+	</Frequency>
+	<Frequency frequencyName="annually">
+	</Frequency>	
+</Frequencies>

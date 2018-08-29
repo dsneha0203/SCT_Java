@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<Products>
+	<Product ProductName="Galaxy Grand 2">
+		<description>Android smart phone</description>
+		<!-- <productSubType>Samsung</productSubType> -->
+		<productSubType>Smart Phone</productSubType>
+	</Product>
+	<Product ProductName="Xiomi Note 4G">
+		<description>Android lollipop</description>
+		<!-- <productSubType>Mi</productSubType> -->
+		<productSubType>Smart Phone</productSubType>
+	</Product>
+	<Product ProductName="Envy">
+		<description>Octa core processor, 8 GB Ram</description>
+		<!-- <productSubType>HP</productSubType> -->
+		<productSubType>Laptop</productSubType>
+	</Product>
+	<Product ProductName="Pavillion">
+		<description>Quad core processor, 4 GB Ram</description>
+		<!-- <productSubType>HP</productSubType> -->
+		<productSubType>Laptop</productSubType>
+	</Product>
+	<Product ProductName="Bravia">
+		<description>LED TV</description>
+		<!-- <productSubType>HP</productSubType> -->
+		<productSubType>TV</productSubType>
+	</Product>
+</Products>

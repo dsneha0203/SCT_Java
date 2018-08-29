@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<Customers>
+	<Customer CustomerName="Intel Corporation">
+		<add_line_1>401,Victoria Enclave</add_line_1>
+		<add_line_2>Garia,Kolkata</add_line_2>
+		<state>West Bengal</state>
+		<custType>Discount Customers</custType>
+	</Customer>
+
+	<Customer CustomerName="VM Ware">
+		<add_line_1>401,Siri Sai Orchid</add_line_1>
+		<add_line_2>Madhapur,Hyderabad</add_line_2>
+		<state>Andhra Pradesh</state>
+		<custType>Loyal Customers</custType>
+	</Customer>
+	
+	<Customer CustomerName="HP">
+		<add_line_1>2/B, </add_line_1>
+		<add_line_2>Kukatpally,Pune</add_line_2>
+		<state>Maharashtra</state>
+		<custType>Loyal Customers</custType>
+	</Customer>
+	
+	<Customer CustomerName="Microsoft">
+		<add_line_1>2/B, </add_line_1>
+		<add_line_2>Kukatpally,Pune</add_line_2>
+		<state>Maharashtra</state>
+		<custType>Loyal Customers</custType>
+	</Customer>
+	
+	<Customer CustomerName="Lenovo">
+		<add_line_1>2/B, </add_line_1>
+		<add_line_2>Kukatpally,Pune</add_line_2>
+		<state>Maharashtra</state>
+		<custType>Wandering Customers</custType>
+	</Customer>
+
+	<Customer CustomerName="Mobile Store">
+		<add_line_1>120, </add_line_1>
+		<add_line_2>Dalhousie Square,Kolkata</add_line_2>
+		<state>West Bengal</state>
+		<custType>Loyal Customers</custType>
+	</Customer>
+	
+</Customers>

@@ -1,0 +1,162 @@
+		<h1 align="center">Compensation Rule Details</h1>
+		<table border=1>
+			<tr>
+				<td>Rule name :</td>
+				<td><input type="text" size=50 value="Max Order Booking"></input></td>
+			</tr>
+			<tr>
+				<td valign="top">Description :</td>
+				<td valign="top"><textarea rows="4" cols="50"
+						style="vertical-align: top">Compensation rule for maximum order booking</textarea>
+				</td>
+			</tr>
+			<tr>
+			<td>Rule type :</td>
+			<td><input type="radio" checked="true">Simple</input>&nbsp;&nbsp;&nbsp;&nbsp;<input
+				type="radio">Composite</input></td>
+			</tr>
+			<tr>
+			<td>Parameters :</td>
+			<td>
+					<table>
+						<tr>
+							<td>Parameter Name
+							</td>
+							<td>Default value
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input value="Param 3"></input>
+							</td>	
+							<td>
+								<input value="10000"></input>
+								<a href="#">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input value="Param 4"></input>
+							</td>	
+							<td>
+								<input value="Direct"></input>
+								<a href="#">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a href="#">Add row</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+			<td>Calculation mode :</td>
+			<td><input type="radio">Individual</input>&nbsp;&nbsp;&nbsp;&nbsp;<input
+				type="radio" checked="true">Rank</input></td>
+			</tr>
+			<tr>
+			<td></td>
+			<td>Within <input type="text" value="10" size="4"></input>ranks in <input type="radio">number</input><input type="radio" checked="true">percentage</input></td>
+			</tr>
+			<tr>
+			<td></td>
+			<td>
+				<table>
+					<tr><td>Population</td><td></td><td><input type="radio" value="Group">Under same reporting manager</input></td></tr>
+					<tr><td></td><td></td><td><input type="radio" value="Group">Same role</input></td></tr>
+					<tr><td></td><td></td><td><input type="radio" value="Group">Global</input> Upto <input type="text" size="4"></input> level up</td></tr>
+				</table>
+			</td>
+			</tr>
+			<tr>
+			<td>Based on :</td>
+			<td>
+				<table>
+					<tr><td>Aggregate function</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Field</td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo">sum</option>
+									<option value="saab" selected="selected">max</option>
+									<option value="mercedes">min</option>
+									<option value="audi">count</option>
+								</select>
+						</td><td></td><td>
+								<select>
+									<option value="volvo" selected="selected">Line Item Total</option>
+									<option value="saab">Quantity</option>
+								</select>
+							</td></tr>
+				</table>
+			</td>
+			</tr>
+			<tr>
+			<td>Qualifying Clause :</td>
+			<td>
+				<table>
+					<tr><td>Field</td><td>Condition</td><td>Value</td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo">Customer Name</option>
+									<option value="saab" selected="selected">Order Total</option>
+									<option value="mercedes">Discount %</option>
+								</select>
+						</td><td>
+								<input type="checkbox" value="Not">Not</input>
+								<select>
+									<option value="volvo">Equals</option>
+									<option value="mercedes">Greater Than</option>
+									<option value="mercedes">Less Than</option>
+									<option value="volvo">Like</option>
+								</select>
+						</td><td>
+								<input type="text" size="20"></input>
+							<a href="#">Delete</a></td></tr>
+				</table>
+				
+			</td>
+			</tr>
+			<tr>
+				<td>&nbsp;
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					Compensation 
+				</td>
+				<td></td>
+			</tr>
+			<tr><td></td><td>
+			<table>
+			<tr>
+				<td><input type="radio">Fixed</input>
+				</td>
+				<td>
+					<input type="text" size="20"></input>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top"><input type="radio" checked="true">Variable</input>
+				</td>
+				<td>
+					Apply formula <input type="text" size="20"></input><br>
+					Parameters <input type="text" size="20"></input><br>
+					(Use RULE_OUTPUT_DATA for the result of the rule evaluation.)
+				</td>
+			</tr>
+			</table>
+			</td></tr>
+		</table>
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+	</script>
+	</div>
+

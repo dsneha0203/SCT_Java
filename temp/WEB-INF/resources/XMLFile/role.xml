@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Roles>
+     <Role Rolename="CEO">
+         <Description>Good</Description>
+     </Role>
+     <Role Rolename="VP Finance">
+         <Description>Good</Description>
+          <ReportsTo>CEO</ReportsTo>
+     </Role>
+     <Role Rolename="VP Operations">
+         <Description>Good</Description>
+          <ReportsTo>CEO</ReportsTo>
+     </Role>
+     <Role Rolename="VP Sales">
+         <Description>Good</Description>
+          <ReportsTo>CEO</ReportsTo>
+     </Role>
+     <Role Rolename="VP Engineering">
+         <Description>Good</Description>
+          <ReportsTo>CEO</ReportsTo>
+     </Role>
+     <Role Rolename="Director QA">
+         <Description>Good</Description>
+          <ReportsTo>VP Engineering</ReportsTo>
+     </Role>
+     <Role Rolename="Director Development">
+         <Description>Good</Description>
+          <ReportsTo>VP Engineering</ReportsTo>
+     </Role>
+     <Role Rolename="Director Project Management">
+         <Description>Good</Description>
+          <ReportsTo>VP Engineering</ReportsTo>
+     </Role>
+     <Role Rolename="Analyst I">
+         <Description>Good</Description>
+          <ReportsTo>Director Project Management</ReportsTo>
+     </Role>
+     <Role Rolename="Analyst II">
+         <Description>Good</Description>
+          <ReportsTo>Director Project Management</ReportsTo>
+     </Role>
+</Roles>

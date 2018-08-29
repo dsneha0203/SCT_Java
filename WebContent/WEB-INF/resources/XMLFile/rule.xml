@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<Rules>
+
+	<Rule RuleName="Rule for getting commission on max sale of computer">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer</Description>
+		<CompensationType>Variable</CompensationType>
+		<CompensationValue>0</CompensationValue>
+		<CompensationFormula>Param 1 * .6 + Param 2 * .7 - Param 3</CompensationFormula>
+		<CompensationParameter>Param 1,Param 2,Param 3</CompensationParameter>
+	 	<RuleParameters>
+			<RuleParameter ParameterName="Param 1">
+				<ParameterValue>600</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 2">
+				<ParameterValue>4300</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 3">
+				<ParameterValue>1750</ParameterValue>
+			</RuleParameter>
+		</RuleParameters>  
+		<RuleSimple>
+			<RuleType>s</RuleType>
+			<CalculationMode>i</CalculationMode>
+			<RankCount>0</RankCount>
+			<RankingType>null</RankingType>
+			<PopulationType>null</PopulationType>
+			<PopulationUpto>0</PopulationUpto>
+			<Field>Line Item Total</Field>
+			<AggregateFun>max</AggregateFun>
+			<QualifyingClauses>
+				<QualifyingClause value="qualifying clause value 1">
+					<FieldList>Customer Name</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>equal</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+				<QualifyingClause value="qualifying clause value 2">
+					<FieldList>Discount Percentage</FieldList>
+					<notFlag>false</notFlag>
+					<ConditionList>equal</ConditionList>
+					<ignoreCase>true</ignoreCase>
+				</QualifyingClause>
+			</QualifyingClauses> 
+		</RuleSimple>
+	</Rule>
+	
+	<Rule RuleName="Rule for getting commission on sale of new smart phone">
+		<Description>This rule is for sales person who will get commission on
+			annually basis for sale of smart phone</Description>
+		<CompensationType>Fixed</CompensationType>
+		<CompensationValue>14000</CompensationValue>
+		<CompensationFormula>null</CompensationFormula>
+		<CompensationParameter>null</CompensationParameter>
+	 	<RuleParameters>
+			<RuleParameter ParameterName="Param 9">
+				<ParameterValue>6549</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 7">
+				<ParameterValue>1234</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 12">
+				<ParameterValue>7869</ParameterValue>
+			</RuleParameter>
+		</RuleParameters> 
+		<RuleSimple>
+			<RuleType>s</RuleType>
+			<CalculationMode>i</CalculationMode>
+			<RankCount>0</RankCount>
+			<RankingType>null</RankingType>
+			<PopulationType>null</PopulationType>
+			<PopulationUpto>0</PopulationUpto>
+			<Field>Quantity</Field>
+			<AggregateFun>max</AggregateFun>
+		 	<QualifyingClauses>
+				<QualifyingClause value="qualifying clause value 5">
+					<FieldList>Order Total</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>less than</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+				<QualifyingClause value="qualifying clause value 8">
+					<FieldList>Office Location</FieldList>
+					<notFlag>false</notFlag>
+					<ConditionList>equal</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+			</QualifyingClauses> 
+		</RuleSimple>
+	</Rule> 
+	
+  	<Rule RuleName="Rule for getting commission on max sale of simcard">
+		<Description>This rule is for sales person who will get commission on
+			quaterly basis for sale of sim card</Description>
+		<CompensationType>Fixed</CompensationType>
+		<CompensationValue>20000</CompensationValue>
+		<CompensationFormula>null</CompensationFormula>
+		<CompensationParameter>null</CompensationParameter>
+	 	<RuleParameters>
+			<RuleParameter ParameterName="Param 5">
+				<ParameterValue>1209</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 9">
+				<ParameterValue>9000</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 14">
+				<ParameterValue>5678</ParameterValue>
+			</RuleParameter>
+		</RuleParameters> 
+		<RuleSimple>
+			<RuleType>s</RuleType>
+			<CalculationMode>r</CalculationMode>
+			<RankCount>3</RankCount>
+			<RankingType>percentage</RankingType>
+			<PopulationType>global upto</PopulationType>
+			<PopulationUpto>3</PopulationUpto>
+			<Field>Quantity</Field>
+			<AggregateFun>max</AggregateFun>
+		 	<QualifyingClauses>
+				<QualifyingClause value="s">
+					<FieldList>Office Location</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>starts with</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+				<QualifyingClause value="16000">
+					<FieldList>Discount Percentage</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>equal</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+			</QualifyingClauses> 
+		</RuleSimple>
+	</Rule>
+	
+ 	<Rule RuleName="Rule for getting commission on top sale of hp laptop">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of sim card</Description>
+		<CompensationType>Variable</CompensationType>
+		<CompensationFormula>Param 15 * 0.5 + Param 19 * 15.5</CompensationFormula>
+		<CompensationParameter>Param 15,Param 19</CompensationParameter>
+		<CompensationValue>0</CompensationValue>
+	 	<RuleParameters>
+			<RuleParameter ParameterName="Param 15">
+				<ParameterValue>1209</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 19">
+				<ParameterValue>9000</ParameterValue>
+			</RuleParameter>
+			<RuleParameter ParameterName="Param 4">
+				<ParameterValue>5678</ParameterValue>
+			</RuleParameter>
+		</RuleParameters> 
+		<RuleSimple>
+			<RuleType>s</RuleType>
+			<CalculationMode>r</CalculationMode>
+			<RankCount>3</RankCount>
+			<RankingType>percentage</RankingType>
+			<PopulationType>global upto</PopulationType>
+			<PopulationUpto>3</PopulationUpto>
+			<Field>Quantity</Field>
+			<AggregateFun>max</AggregateFun>
+		 	<QualifyingClauses>
+				<QualifyingClause value="s">
+					<FieldList>Office Location</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>starts with</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+				<QualifyingClause value="16000">
+					<FieldList>Order Total</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>starts with</ConditionList>
+					<ignoreCase>false</ignoreCase>
+				</QualifyingClause>
+			</QualifyingClauses> 
+		</RuleSimple>
+	</Rule> 
+</Rules>

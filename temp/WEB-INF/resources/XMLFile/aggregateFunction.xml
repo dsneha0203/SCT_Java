@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<AggragateFunctions>
+	<AggragateFunction functionName="sum">
+	</AggragateFunction>
+	<AggragateFunction functionName="max">
+	</AggragateFunction>
+	<AggragateFunction functionName="min">
+	</AggragateFunction>
+	<AggragateFunction functionName="count">
+	</AggragateFunction>
+</AggragateFunctions>

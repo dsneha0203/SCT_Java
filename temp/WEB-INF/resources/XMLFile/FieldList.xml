@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<FieldLists>
+
+	<FieldList fieldName="field_1">
+	  <DisplayName>Order Total</DisplayName>
+	</FieldList>
+	<FieldList fieldName="field_2">
+	  <DisplayName>Discount Percentage</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_3">
+	  <DisplayName>Duty Percentage</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_4">
+	  <DisplayName>Customer Name</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_5">
+	  <DisplayName>Office Location</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_6">
+	  <DisplayName>Product Type</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_7">
+	  <DisplayName>Quantity</DisplayName>
+	</FieldList>
+	
+	<FieldList fieldName="field_8">
+	  <DisplayName>Product Name</DisplayName>
+	</FieldList>
+
+	<FieldList fieldName="field_9">
+	  <DisplayName>Sale Type</DisplayName>
+	</FieldList>	
+</FieldLists>

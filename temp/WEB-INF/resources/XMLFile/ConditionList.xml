@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Conditions>
+	<Condition conditionValue="greater than">
+	</Condition>
+	<Condition conditionValue="less than">
+	</Condition>
+	<Condition conditionValue="equal">
+	</Condition>	
+	<Condition conditionValue="starts with">
+	</Condition>
+	<Condition conditionValue="ends with">
+	</Condition>
+	<Condition conditionValue="same month">
+	</Condition>
+	<Condition conditionValue="same week day">
+	</Condition>
+	<Condition conditionValue="greater than equal to">
+	</Condition>
+	<Condition conditionValue="less than equal to">
+	</Condition>
+</Conditions>

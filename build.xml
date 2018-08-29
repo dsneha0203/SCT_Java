@@ -1,0 +1,408 @@
+<project name="CommissionTool" basedir="." default="install">
+
+	<property file="build.properties"/>
+
+	<!-- project-specific variables -->
+	<property name="jsp.dir.name" value="CommissionTool" />
+	<property name="package.name" value="${jsp.dir.name}.war" />
+	<property name="webapp.dir" value="${my.webapp.dir}" />
+
+	<property environment="env" />
+	<property name="build.dir" value="build" />
+	<property file="${build.dir}/build.${env.HOSTNAME}" />
+
+	<property name="lib.dir" value="lib" />
+	<property name="pages.dir" value="pages" />
+	<property name="src.dir" value="src/java" />
+	<!--<property name="src.tests.dir" value="src/test" /> -->
+	<property name="resources.dir" value="resources" />
+	<property name="dest.dir" value="target" />
+
+	<!-- put everything in a temp folder with the right structure during the build -->
+	<property name="temp.dir" value="temp" />
+	<property name="temp.dir.web-inf" value="${temp.dir}/WEB-INF" />
+	<property name="temp.dir.lib" value="${temp.dir.web-inf}/lib" />
+	<property name="temp.dir.classes" value="${temp.dir.web-inf}/classes" />
+	<property name="temp.dir.meta-inf" value="${temp.dir}/META-INF" />
+
+	<property name="temp.mockup" value="tempMockup" />
+
+	<property name="package.file" value="${dest.dir}/${package.name}" />
+	<!-- put java doc in this folder during build -->
+	<property name="docs.dir" value="doc" />
+	
+	
+	
+	<!-- Change the following properties accordingly. -->
+	  <property name="db.username" value="root"/>
+	  <property name="db.password" value=""/>
+	  <property name="db.name" value="salescommission"/><!-- The name of the database to backup. -->
+	  <property name="mysql" value="\opt\lampp\bin\mysql"/><!-- Path to mysql program. -->
+	  <property name="mysqladmin" value="\opt\lampp\bin\mysqladmin"/><!-- Path to mysqladmin program. -->
+
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="./antlib/ant/ant-contrib-0.3.jar" />
+		</classpath>
+	</taskdef>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+		classpath="relative/path/to/ant-contrib-1.0b3.jar"/>
+	<taskdef resource="net/sf/antcontrib/antlib.xml" 
+		classpath="relative/path/to/ant-contrib-1.0b3.jar"/>
+
+	<path id="build.class.path">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete failonerror= "false">
+			<fileset dir="${dest.dir}" includes="**/*" />
+		</delete>
+		<delete dir="${temp.dir}" />
+		<delete dir="${temp.dir.classes}" />
+		<delete dir="${temp.dir.meta-inf}" />
+		<delete dir="${temp.dir.web-inf}" />
+		<delete dir="${temp.mockup}" />
+		<delete dir="${docs.dir}" />
+	</target>
+
+	<target name="prepare" depends="clean">
+		<mkdir dir="${dest.dir}" />
+		<mkdir dir="${temp.dir}" />
+		<mkdir dir="${temp.dir.lib}" />
+		<mkdir dir="${temp.dir.meta-inf}" />
+		<mkdir dir="${temp.dir.web-inf}" />
+		<mkdir dir="${temp.dir.classes}" />
+		<mkdir dir="${temp.mockup}" />
+		<mkdir dir="${docs.dir}" />
+		<copy file="build.properties" tofile="src/java/app.properties"/>
+	</target>
+
+	<!-- PACK Mockups -->
+	<target name="packMockup" depends="prepare">
+		<echo>=== PACKAGE ===</echo>
+		<copy todir="${temp.mockup}/mockup" overwrite="true">
+			<fileset dir="ui/mockups" />
+		</copy>
+		<mkdir dir="${temp.mockup}/mockup/dist" />
+		<!--  PACK Mockups for menu -->
+		<loadfile property="menu" srcFile="${temp.mockup}/mockup/html/components/menu.html" />
+		<replace file="${temp.mockup}/mockup/html/App.template" token="@@MENU@@" value="${menu}" />
+		<foreach target="includeTemplate" param="fileLoaction">
+			<fileset dir="${temp.mockup}/mockup/html/pages" casesensitive="yes">
+				<include name="**/*.html" />
+			</fileset>
+		</foreach>
+
+		<loadfile property="setTarget" srcFile="${temp.mockup}/mockup/html/components/setTarget.html" />
+		<replace file="${temp.mockup}/mockup/html/pages/employee/EmployeeDetailsComponent.html" token="@@TARGETCONTENT@@" value="${setTarget}" />
+		<replace file="${temp.mockup}/mockup/html/pages/orgStructure/EditStructure.html" token="@@TARGETCONTENT@@" value="${setTarget}" />
+		<loadfile property="setParameter" srcFile="${temp.mockup}/mockup/html/components/planParameters.html" />
+		<replace file="${temp.mockup}/mockup/html/pages/compPlan/CompPlan.html" token="@@PLANPARAMETER@@" value="${setParameter}" />
+	</target>
+
+	<target name="includeTemplate">
+		<loadfile property="fileContent" srcFile="${fileLoaction}" />
+		<copy file="${temp.mockup}/mockup/html/App.template" tofile="${fileLoaction}" />
+		<replace file="${fileLoaction}" token="@@FILECONTENT@@" value="${fileContent}" />
+	</target>
+
+	<!-- COMPILE -->
+	<target name="compile" depends="prepare">
+		<echo>=== COMPILE ===</echo>
+		<echo>Compiling ${src.dir} files ...</echo>
+		<javac debug="on" srcdir="${src.dir}" destdir="${temp.dir.classes}" includeantruntime="**/*">
+			<classpath refid="build.class.path" />
+		</javac>
+
+		<!-- compile files on the src-tests path -->
+		<!--	<echo>Compiling ${src.tests.dir} files ...</echo>
+		<javac debug="on" srcdir="${src.tests.dir}" destdir="${temp.dir.classes}" includes="com/**">
+			<classpath refid="build.class.path" />
+		</javac> -->
+	</target>
+	
+	
+
+	<!-- PACKAGE -->
+	<target name="package" depends="compile">
+		<echo>=== PACKAGE ===</echo>
+
+		<!-- copy the config files -->
+		<!--
+		<copy file="${resources.dir}/MANIFEST.MF" tofile="${temp.dir.meta-inf}/MANIFEST.MF" overwrite="true" />
+		<copy file="${resources.dir}/web.xml" tofile="${temp.dir.web-inf}/web.xml" overwrite="true" />
+		<copy file="${resources.dir}/managed-beans.xml" tofile="${temp.dir.web-inf}/managed-beans.xml" overwrite="true" />
+		<copy file="${resources.dir}/navigation-rules.xml" tofile="${temp.dir.web-inf}/navigation-rules.xml" overwrite="true" />
+		-->
+		<copy todir="${temp.dir.web-inf}" overwrite="true">
+			<fileset dir="WebContent/WEB-INF">
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir.lib}" overwrite="true" flatten="true">
+			<fileset dir="lib">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir.classes}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.xsl" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+
+		<!-- the ant war task. with all resources in place, create the war file -->
+		<war destfile="${package.file}" webxml="${temp.dir.web-inf}/web.xml" basedir="${temp.dir}">
+			<fileset dir="${pages.dir}" />
+			<lib dir="${temp.dir.lib}" />
+			<classes dir="${temp.dir.classes}" />
+		</war>
+	</target>
+
+	<!-- JUST DEPLOY THE JSP's (without rebuilding the entire project) -->
+	<target name="jsps">
+		<echo>=== DEPLOY JSP'S ===</echo>
+		<!-- i'm trying to be explicit about what i put out there -->
+		<copy todir="${webapp.dir}/${jsp.dir.name}">
+			<fileset dir="${pages.dir}">
+				<include name="**/*.jsp" />
+				<include name="**/*.html" />
+				<include name="**/*.css" />
+				<include name="**/*.gif" />
+				<include name="**/*.jpg" />
+				<include name="**/*.png" />
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- INSTALL -->
+	<target name="install" depends="package, packMockup">
+		<echo>=== INSTALL ===</echo>
+		<copy file="${package.file}" tofile="${webapp.dir}/${package.name}" overwrite="true" />
+	</target>
+
+	<!-- Calling Java Main -->
+	
+	<!-- separate target to generate dummy employee data -->
+	<target name="dummyEmpScript" depends="compile, package">
+		<java classname="com.simpsoft.salesCommission.dummyData.dummyEmployee" fork="true"
+	           failonerror="true">
+		    <arg value="10"/>
+			<classpath refid="build.class.path" />
+		   
+		        <classpath path="${temp.dir.classes}"/>
+		   
+		</java>
+	</target>
+	
+	<!-- separate target to generate dummy product data -->
+	<target name="dummyProductScript" depends="compile, package">
+			<java classname="com.simpsoft.salesCommission.dummyData.dummyProduct" fork="true"
+		           failonerror="true">
+			    <arg value="10"/>
+				<classpath refid="build.class.path" />
+			   
+			        <classpath path="${temp.dir.classes}"/>
+			   
+			</java>
+		</target>
+	
+	
+	<!-- separate target to upload rules  -->
+	<target name="uploadRule" depends="compile, package">
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRule"  fork="true"
+											           failonerror="true">
+													<arg value="-h"/>
+													<classpath refid="build.class.path" />
+													<classpath path="${temp.dir.classes}" />
+												</java>	
+		
+		</target>
+	
+	<!-- separate target to upload composite rules  -->
+	<target name="uploadCompRule" depends="compile, package">
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRuleComposite"  fork="true"
+															           failonerror="true">
+																	<arg value="-h"/>
+																	<classpath refid="build.class.path" />
+																	<classpath path="${temp.dir.classes}" />
+																</java> 
+			
+			</target>
+	
+	<!-- separate target for calculation  -->
+	<target name="calc" depends="compile, package">
+			<java classname="com.simpsoft.salesCommission.app.calculation.CalculateCompAmountSimpleInd"  fork="true"
+																           failonerror="true">
+																		<arg value="04/05/2018"/>
+																		<arg value="30/09/2018"/>
+																		<classpath refid="build.class.path" />
+																		<classpath path="${temp.dir.classes}" />
+																	</java> 
+				
+				</target>
+	
+	<target name="callJava" depends="restore_db,compile, package">
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForAggregateFunction"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForConditionList"  fork="true"
+					           failonerror="true">
+							<arg value="-h"/>
+							<classpath refid="build.class.path" />
+							<classpath path="${temp.dir.classes}" />
+						</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForFieldList"  fork="true"
+					           failonerror="true">
+							<arg value="-h"/>
+							<classpath refid="build.class.path" />
+							<classpath path="${temp.dir.classes}" />
+						</java>
+		<!--<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRole"  fork="true"
+							           failonerror="true">
+									<arg value="-h"/>
+									<classpath refid="build.class.path" />
+									<classpath path="${temp.dir.classes}" />
+								</java>-->
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForFrequency"  fork="true"
+									           failonerror="true">
+											<arg value="-h"/>
+											<classpath refid="build.class.path" />
+											<classpath path="${temp.dir.classes}" />
+										</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRule"  fork="true"
+									           failonerror="true">
+											<arg value="-h"/>
+											<classpath refid="build.class.path" />
+											<classpath path="${temp.dir.classes}" />
+										</java>	
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForState"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForAddress"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<!--<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLFile"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>-->
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForCustomerType"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForCustomer"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForProductType"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForProductSubType"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>
+		<!--<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForProduct"  fork="true"
+			           failonerror="true">
+					<arg value="-h"/>
+					<classpath refid="build.class.path" />
+					<classpath path="${temp.dir.classes}" />
+				</java>-->
+		<!--<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRuleAssignment"  fork="true"
+									           failonerror="true">
+											<arg value="-h"/>
+											<classpath refid="build.class.path" />
+											<classpath path="${temp.dir.classes}" />
+										</java>
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRuleAssignmentToRole"  fork="true"
+									           failonerror="true">
+											<arg value="-h"/>
+											<classpath refid="build.class.path" />
+											<classpath path="${temp.dir.classes}" />
+										</java>-->
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForSplitRule"  fork="true"
+											           failonerror="true">
+													<arg value="-h"/>
+													<classpath refid="build.class.path" />
+													<classpath path="${temp.dir.classes}" />
+												</java> 
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForTarget"  fork="true"
+											           failonerror="true">
+													<arg value="-h"/>
+													<classpath refid="build.class.path" />
+													<classpath path="${temp.dir.classes}" />
+												</java> 
+		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForRuleComposite"  fork="true"
+													           failonerror="true">
+															<arg value="-h"/>
+															<classpath refid="build.class.path" />
+															<classpath path="${temp.dir.classes}" />
+														</java> 
+	</target>
+
+	
+	
+	
+	 <!-- ***************************************
+	  Restore MySQL database 
+	  **************************************** -->  
+	  <target name="restore_db">
+	    <!-- Clean up the database by deleting and then creating it. -->
+	    <antcall target="delete_db"/>
+	    <antcall target="create_db"/>
+	  	</target>
+	  
+	 
+	  
+	 
+	   
+	 
+	  <target name="delete_db">
+	    <exec executable="${mysqladmin}">
+	      <arg value="--user=${db.username}"/>
+	      <arg value="--password=${db.password}"/>
+	      <arg value="--force"/>
+	      <arg value="drop"/>
+	      <arg value="${db.name}"/>
+	    </exec>
+	  </target>
+	 
+	  <target name="create_db">
+	    <exec executable="${mysqladmin}">
+	      <arg value="--user=${db.username}"/>
+	      <arg value="--password=${db.password}"/>
+	      <arg value="--force"/>
+	      <arg value="create"/>
+	      <arg value="${db.name}"/>
+	    </exec>
+	  </target>
+	
+	
+	
+</project>

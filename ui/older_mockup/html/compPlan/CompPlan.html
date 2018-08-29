@@ -1,0 +1,125 @@
+		<h1 align="center">Compensation Plan Assignment</h1>
+		<table>
+			<tr><td>
+				<table>
+					<tr>
+						<td><input type="radio">Employee</input><br>
+						Select Employee : Selected Employee
+						<script>
+							printChooseEmployee();
+						</script>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Or</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><input type="radio" checked="checked">Role</input><br>
+						Select Role :
+								<select>
+									<option value="volvo">Systems Engineer</option>
+									<option value="saab">Analyst</option>
+									<option value="mercedes" selected="selected">Management support</option>
+								</select>
+						
+						</td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			
+			<tr><td>
+				<table>
+					<tr>
+						<td>Plan validity :
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><input type="radio">Fixed Date</input> &nbsp;&nbsp;&nbsp;&nbsp;
+							From <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>
+							To <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>Or
+						</td>
+					</tr>
+					<tr>
+						<td>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><input type="radio" checked="checked">Repeats</input> &nbsp;&nbsp;&nbsp;&nbsp;
+							From <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>
+							Frequency
+								<select>
+									<option value="volvo">Weekly</option>
+									<option value="saab">Fortnightly</option>
+									<option value="mercedes" selected="selected">Monthly</option>
+									<option value="saab">Quarterly</option>
+									<option value="saab">Annualy</option>
+								</select>
+							Ending On <input type="text"></input>
+							<script>
+								printChooseCal();
+							</script>					</td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td>
+				Selected Plans <br>
+				<table border="1">
+					<thead>
+						<tr>
+							<td>Plan Id</td>
+							<td>Plan Name</td>
+							<td>Plan Description</td>
+							<td>Details</td>
+							<td>&nbsp;</td>
+						</tr>
+					</thead>
+					<tr>
+						<td valign="top"><a href="./App.html?content=/../compRule/CompRuleDetailsComposite.html">P001</a></td>
+						<td valign="top">High Performance</td>
+						<td valign="top">Compensation rule for high performers</td>
+						<td>When any of "Top Ranks", "Sales Performance", "Order booking" is achieved, pay 10% of "Sales performance"
+						<br>
+							<div id="planParameter1"></div>
+						</td>
+						<td><a href="#">Delete</a></td>
+					</tr>
+					<tr>
+						<td valign="top"><a href="./App.html?content=/../compRule/CompRuleDetailsSimpleRank.html">P002</a></td>
+						<td valign="top">Max Order booking</td>
+						<td valign="top">Compensation rule for maximum order booking</td>
+						<td>When within 10% of all the employees based on max(order total)
+						<br>
+							<div id="planParameter2"></div>
+						
+						</td>
+						<td><a href="#">Delete</a></td>
+					</tr>
+					<tr>
+						<td colspan="5" align="right"><a href="#">Add new</a></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+		$("#planParameter1").load("components/planParameters.html");
+		$("#planParameter2").load("components/planParameters.html");
+	</script>
+

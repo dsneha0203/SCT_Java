@@ -1,0 +1,77 @@
+
+ <title>OrgStructure</title>
+<link rel="stylesheet" href="../../../css/kendo.common.min.css" />
+    <link rel="stylesheet" href="../../../css/kendo.default.min.css" />
+
+    <script src="../../../js/jquery-1.12.1.min.js"></script>
+    <script src="../../../js/kendo.all.min.js"></script>
+    
+<div align="center"><h1> Oraganization Hierchy </h1></div>
+<table>
+<ul id="panelbar">
+    <li>CEO
+        <ul>
+            <li>	1. VP Finance </li>
+            <li>	2. VP Operations</li>
+            <li>	3. VP Sales</li>
+            <li >	4. VPEngineering</li>         
+        </ul>
+       
+    </li>
+    <li> Director  
+
+        <ul>
+        	<li>1. Director QA</li>
+            <li>2. Director Development</li>
+            <li>3. Director Project Management</li>
+            
+        </ul>
+    </li>
+    <li> Analyst
+
+        <ul>
+            <li>1. Analyst I </li>
+            <li>2. Analyst II </li>
+            
+        </ul>
+        
+        <li> MANAGER
+        <ul>
+        	
+            <li>1. SR.PROJECT MANAGER</li>
+            <li>2. PROJECT MANAGER</li>
+            
+        </ul>
+    </li>
+    <li> TEAM LEADER 
+        <ul>
+        	
+            <li>1. TEAM LEADER </li>
+            <li>2. Sr. TEAM LEADER</li>
+            
+        </ul>
+    </li>
+    <li> Developer
+        <ul>
+        	
+            <li>1. SOFTWARE DEVELOPER </li>
+            <li>2. TESTER </li>
+            
+        </ul>
+    </li>
+    
+</ul>
+</table>
+<script>
+    $("#panelbar").kendoPanelBar({
+    	scorallable: true,
+     animation: {
+          expand: {
+              duration: 1000
+          }
+    	
+    
+       }
+    
+    });
+</script>

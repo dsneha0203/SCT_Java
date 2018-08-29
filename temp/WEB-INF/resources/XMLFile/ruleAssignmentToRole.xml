@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<RuleAssignments>	
+	<RuleAssignment>
+		<EmployeeName>null</EmployeeName>
+		<RoleName>VP Finance</RoleName>
+		<AssignmentDetails>
+			<AssignmentDetail validityType="repeats">
+				<StartDate>31/03/2016</StartDate>
+				<EndDate>30/09/2016</EndDate>
+				<RuleID>1</RuleID>
+				<Frequency>weekly</Frequency>
+			</AssignmentDetail>
+			<AssignmentDetail validityType="repeats">
+				<StartDate>02/04/2016</StartDate>
+				<EndDate>02/10/2016</EndDate>
+				<RuleID>4</RuleID>
+				<Frequency>monthly</Frequency>
+			</AssignmentDetail>
+		</AssignmentDetails>
+	</RuleAssignment>
+	<RuleAssignment>
+		<EmployeeName>null</EmployeeName>
+		<RoleName>CEO</RoleName>
+		<AssignmentDetails>
+			<AssignmentDetail validityType="fixed">
+				<StartDate>31/03/2016</StartDate>
+				<EndDate>30/09/2016</EndDate>
+				<RuleID>2</RuleID>
+				<Frequency>null</Frequency>
+			</AssignmentDetail>
+			<AssignmentDetail validityType="repeats">
+				<StartDate>02/04/2016</StartDate>
+				<EndDate>02/10/2016</EndDate>
+				<RuleID>3</RuleID>
+				<Frequency>monthly</Frequency>
+			</AssignmentDetail>
+		</AssignmentDetails>
+	</RuleAssignment>
+	<RuleAssignment>
+		<EmployeeName>null</EmployeeName>
+		<RoleName>Accounts</RoleName>
+		<AssignmentDetails>
+			<AssignmentDetail validityType="repeats">
+				<StartDate>31/03/2016</StartDate>
+				<EndDate>30/09/2016</EndDate>
+				<RuleID>1</RuleID>
+				<Frequency>weekly</Frequency>
+			</AssignmentDetail>
+			<AssignmentDetail validityType="fixed">
+				<StartDate>01/04/2016</StartDate>
+				<EndDate>01/04/2017</EndDate>
+				<RuleID>2</RuleID>
+				<Frequency>null</Frequency>
+			</AssignmentDetail>
+		</AssignmentDetails>
+	</RuleAssignment>
+</RuleAssignments>

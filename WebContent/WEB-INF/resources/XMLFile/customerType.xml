@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<CutomerTypes>
+	<CutomerType typeName="Loyal Customers">
+	</CutomerType>
+	<CutomerType typeName="Discount Customers">
+	</CutomerType>
+	<CutomerType typeName="Impulse Customers">
+	</CutomerType>
+	<CutomerType typeName="Need-Based Customers">
+	</CutomerType>
+	<CutomerType typeName="Wandering Customers">
+	</CutomerType>
+</CutomerTypes>

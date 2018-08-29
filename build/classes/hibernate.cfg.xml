@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.event.merge.entity_copy_observer">allow</property>  
+		<mapping class="com.simpsoft.salesCommission.app.model.Employee" />
+		<mapping class="com.simpsoft.salesCommission.app.model.Role" />
+		<mapping class="com.simpsoft.salesCommission.app.model.EmployeeRoleMap" />
+		<mapping class="com.simpsoft.salesCommission.app.model.EmployeeManagerMap" />
+		<mapping class="com.simpsoft.salesCommission.app.model.Rule" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleSimple" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleComposite" />
+		<mapping class="com.simpsoft.salesCommission.app.model.QualifyingClause" />
+		<mapping class="com.simpsoft.salesCommission.app.model.FieldList" />
+		<mapping class="com.simpsoft.salesCommission.app.model.Frequency" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleAssignment" />
+		<mapping class="com.simpsoft.salesCommission.app.model.ConditionList" />
+		<mapping class="com.simpsoft.salesCommission.app.model.AggregateFunctions" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleParameter" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleAssignmentDetails" />
+		<mapping class="com.simpsoft.salesCommission.app.model.RuleAssignmentParameter" />
+		<mapping class="com.simpsoft.salesCommission.app.model.Target" />
+		<mapping class="com.simpsoft.salesCommission.app.model.TargetDefinition" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.State" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.Address" />
+		<mapping class="com.simpsoft.salesCommission.app.model.OfficeLocation" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CustomerType" />
+		<mapping class="com.simpsoft.salesCommission.app.model.Customer" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.OrderRoster" />
+		<mapping class="com.simpsoft.salesCommission.app.model.OrderDetail" />
+		<mapping class="com.simpsoft.salesCommission.app.model.OrderLineItems" />
+		<mapping class="com.simpsoft.salesCommission.app.model.OrderLineItemsSplit" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.Product" />
+		<mapping class="com.simpsoft.salesCommission.app.model.ProductSubType" />
+		<mapping class="com.simpsoft.salesCommission.app.model.ProductType" />
+		<mapping class="com.simpsoft.salesCommission.app.model.SplitQualifyingClause" />
+		<mapping class="com.simpsoft.salesCommission.app.model.SplitRule" />
+		<mapping class="com.simpsoft.salesCommission.app.model.SplitRuleBeneficiary" />
+		<mapping class="com.simpsoft.salesCommission.app.model.ProductType" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CalculationRoster" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CalcDetailsOrderLineItems" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CalculationComposite" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CalculationSimple" />	
+		<mapping class="com.simpsoft.salesCommission.app.model.CalculationDetails" />	
+				
+	</session-factory>
+</hibernate-configuration>

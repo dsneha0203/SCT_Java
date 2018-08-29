@@ -1,0 +1,52 @@
+<h1 align="center">Organization Structure</h1>
+<table width="500">
+<tr width="80%"><td></td><td width="20%"></td>
+<tr><td align="left">
+<ul class="non-bullet">
+     <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">CEO</a></span><ul class="non-bullet">
+        <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">VP Finance</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">VP Operations</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">VP Sales</a></span></li>
+        <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">VPEngineering</a></span><ul class="non-bullet">
+            <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">Director QA</a></span></li>
+            <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">Director Development</a></span></li>
+            <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">Director Project Management</a></span><ul class="non-bullet">
+           		 <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">Analyst I</a></span></li>
+           		 <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">Analyst II</a></span></li>
+            	 <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">MANAGER Project Management</a></span></li>
+            	 <li><span class="Collapsable">- &nbsp; <a href="javascript:close();">SR.PROJECT MANAGER</a></span><ul class="non-bullet">
+           		 	<li><span class="Collapsable">- &nbsp; <a href="javascript:close();">PROJECT MANAGER</a></span></li>
+           		 		<li><span >- &nbsp;<a href="javascript:close();">TEAM LEADER</a></span></li>
+            	 		<li><span >- &nbsp;<a href="javascript:close();">Sr. TEAM LEADER</a></span></li>
+            	 		<li><span >- &nbsp;<a href="javascript:close();">SOFTWARE DEVELOPER</a></span></li>
+            	 		<li><span >- &nbsp;<a href="javascript:close();">TESTER</a></span></li>
+        	</ul>
+        	</li>
+        	</ul>
+        	</li>
+        	</ul>
+        </li>
+        </ul>
+        </li>
+    </ul>
+   
+    </td>
+    <td>&nbsp;</td>
+    </tr>
+</table>
+    <script>
+    $(".Collapsable").click(function () {
+        $(this).parent().children().toggle();
+        $(this).toggle();
+        $(this).html($(this).html().startsWith('+') ? $(this).html().replace('+','-') : $(this).html().replace('-','+'));
+    });
+		function clickLink() {
+			var showMenuParam = getUrlVars()["showMenu"];
+			if (showMenuParam != 'no') {
+				window.location = '../../pages/orgStructure/EditStructure.html';
+			} else {
+				close();
+			}
+		}
+	</script>
+    

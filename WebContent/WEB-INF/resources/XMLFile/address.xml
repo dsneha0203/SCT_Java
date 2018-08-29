@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Addresses>
+	<Address add_line_1="19/B,Metro Plaza">
+	<add_line_2>Park Street,Kolkata</add_line_2>
+	<state>West Bengal</state>
+	</Address>
+	<Address add_line_1="401,Victoria Enclave">
+	<add_line_2>Shilparamam,Hyderabad</add_line_2>
+	<state>Andhra Pradesh</state>
+	</Address>
+	<Address add_line_1="230,New Complex">
+	<add_line_2>Camac Street,Kolkata</add_line_2>
+	<state>West Bengal</state>
+	</Address>
+	<Address add_line_1="19/B,S.N.Bose Rd">
+	<add_line_2>Kolkata</add_line_2>
+	<state>West Bengal</state>
+	</Address>
+	<Address add_line_1="129/S,B.P.Nalli Rd">
+	<add_line_2>Bangalore</add_line_2>
+	<state>Karnataka</state>
+	</Address>
+	<Address add_line_1="19/B,C.I.T Rd">
+	<add_line_2>Surat</add_line_2>
+	<state>Gujarat</state>
+	</Address>
+</Addresses>

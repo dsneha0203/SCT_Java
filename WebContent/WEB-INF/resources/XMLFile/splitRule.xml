@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<SplitRules>
+
+	<SplitRule splRuleName="Rule for getting commission on max sale of computer">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer
+		</Description>
+		<StartDate>31/03/2016</StartDate>
+		<EndDate>31/08/2016</EndDate>
+		<SplitQualifyingClauses>
+			<SplitQualifyingClause value="8">
+				<FieldList>Duty Percentage</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+			<SplitQualifyingClause value="5">
+				<FieldList>Discount Percentage</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+		</SplitQualifyingClauses>
+		<SplitRuleBeneficiaries>
+		<SplitRuleBeneficiary BeneficiaryType="SalesRep">
+				<SplitPercentage>35</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="SystemEngineer">
+				<SplitPercentage>35</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="Manager">
+				<SplitPercentage>20</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="Admin">
+				<SplitPercentage>10</SplitPercentage>
+			</SplitRuleBeneficiary>
+		</SplitRuleBeneficiaries>
+	</SplitRule>
+	
+	<SplitRule splRuleName="Rule for getting commission on max sale of smartphone">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer
+		</Description>
+		<StartDate>31/03/2016</StartDate>
+		<EndDate>31/08/2016</EndDate>
+		<SplitQualifyingClauses>
+			<SplitQualifyingClause value="4">
+				<FieldList>Duty Percentage</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+			<SplitQualifyingClause value="2">
+				<FieldList>Discount Percentage</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+		</SplitQualifyingClauses>
+		<SplitRuleBeneficiaries>
+		<SplitRuleBeneficiary BeneficiaryType="SalesRep">
+				<SplitPercentage>35</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="SystemEngineer">
+				<SplitPercentage>35</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="Manager">
+				<SplitPercentage>20</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="Admin">
+				<SplitPercentage>10</SplitPercentage>
+			</SplitRuleBeneficiary>
+		</SplitRuleBeneficiaries>
+	</SplitRule>
+	
+ <SplitRule splRuleName="Rule for getting commission on max sale of mobile">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of mobile
+		</Description>
+		<StartDate>31/03/2016</StartDate>
+		<EndDate>31/08/2016</EndDate>
+		<SplitQualifyingClauses>
+			<SplitQualifyingClause value="Mobile Store">
+				<FieldList>Customer Name</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+			<SplitQualifyingClause value="100000">
+				<FieldList>Order Total</FieldList>
+				<notFlag>false</notFlag>
+				<ConditionList>equal</ConditionList>
+			</SplitQualifyingClause>
+		</SplitQualifyingClauses>
+		<SplitRuleBeneficiaries>
+		<SplitRuleBeneficiary BeneficiaryType="SalesRep">
+				<SplitPercentage>40</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="SystemEngineer">
+				<SplitPercentage>40</SplitPercentage>
+			</SplitRuleBeneficiary>
+			<SplitRuleBeneficiary BeneficiaryType="Manager">
+				<SplitPercentage>20</SplitPercentage>
+			</SplitRuleBeneficiary>
+		</SplitRuleBeneficiaries>
+	</SplitRule>
+<!--  		<SplitRule splRuleName="Rule for getting commission on top sale of hp laptop">
+		<Description>This rule is for sales person who will get commission on
+			monthly basis for sale of computer
+		</Description>
+		<StartDate>14/04/2016</StartDate>
+		<EndDate>18/09/2016</EndDate>
+		<SplitQualifyingClauses>
+				<SplitQualifyingClause value="Laptop">
+					<FieldList>Product Type</FieldList>
+					<notFlag>false</notFlag>
+					<ConditionList>equal</ConditionList>
+				</SplitQualifyingClause>
+				<SplitQualifyingClause value="16000">
+					<FieldList>Order Total</FieldList>
+					<notFlag>true</notFlag>
+					<ConditionList>less than</ConditionList>
+				</SplitQualifyingClause>
+			</SplitQualifyingClauses> 
+		<SplitRuleBeneficiaries>
+		<SplitRuleBeneficiary BeneficiaryType="SalesRep">
+				<SplitPercentage>70</SplitPercentage>
+			</SplitRuleBeneficiary>	
+			<SplitRuleBeneficiary BeneficiaryType="Manager">
+				<SplitPercentage>30</SplitPercentage>
+			</SplitRuleBeneficiary>
+		</SplitRuleBeneficiaries>
+	</SplitRule>  -->
+</SplitRules>

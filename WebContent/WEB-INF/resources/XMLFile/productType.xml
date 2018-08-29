@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ProductTypes>
+	<!-- <ProductType typeName="Laptop">
+	</ProductType>
+	<ProductType typeName="Smart Phone">
+	</ProductType>
+	<ProductType typeName="TV">
+	</ProductType>
+	<ProductType typeName="Home Theater">
+	</ProductType> -->
+	<ProductType typeName="Product"></ProductType>
+	<ProductType typeName="Service"></ProductType>
+</ProductTypes>

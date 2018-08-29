@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<Imports>
+	<!--<Import importDate="">
+		<importedBy>emp_1</importedBy>
+		<orderCounts>3</orderCounts>
+		<status>new</status>
+		<orders>
+			<order orderDate="27/03/2016">
+				<salesRep>emp_2</salesRep>
+				<admin>emp_3</admin>
+				<supportEngineer>emp_4</supportEngineer>
+				<customer>HP</customer>
+				<OfficeName>Hestingsh House</OfficeName>
+				<OfficeCode>4789</OfficeCode>
+				<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+				<add_line_2>Kolkata</add_line_2>
+				<state>West Bengal</state>
+				<saleType>Phone</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_1">
+						<quantity>5</quantity>
+						<rate>80000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>8</dutyPercentage>
+					</orderLineItem>
+					<orderLineItem product="prod_3">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+			<order orderDate="28/03/2016">
+				<salesRep>emp_5</salesRep>
+				<admin>emp_6</admin>
+				<supportEngineer>emp_7</supportEngineer>
+				<customer>Mobile Store</customer>
+				<OfficeName>Jefello International</OfficeName>
+				<OfficeCode>2341</OfficeCode>
+				<add_line_1>129/S,B.P.Nalli Rd</add_line_1>
+				<add_line_2>Bangalore</add_line_2>
+				<state>Karnataka</state>
+				<saleType>Counter</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_2">
+						<quantity>5</quantity>
+						<rate>80000</rate>
+						<discountPercentage>2</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+					</orderLineItem>
+					<orderLineItem product="prod_4">
+						<quantity>5</quantity>
+						<rate>10000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>8</dutyPercentage>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+			<order orderDate="15/09/2015">
+				<salesRep>emp_2</salesRep>
+				<admin>emp_3</admin>
+				<supportEngineer>emp_8</supportEngineer>
+				<customer>Mobile Store</customer>
+				<OfficeName>Rythmic House</OfficeName>
+				<OfficeCode>6598</OfficeCode>
+				<add_line_1>19/B,C.I.T Rd</add_line_1>
+				<add_line_2>Surat</add_line_2>
+				<state>Gujarat</state>
+				<saleType>Online</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_3">
+						<quantity>5</quantity>
+						<rate>10000</rate>
+						<discountPercentage>4</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+					</orderLineItem>
+					<orderLineItem product="prod_2">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+					</orderLineItem>
+				</orderLineItems>
+			</order>  
+		</orders>
+	</Import> -->
+ 
+<Import importDate="">
+		<importedBy>emp_1</importedBy>
+		<orderCounts>4</orderCounts>
+		<status>new</status>
+		<orders>
+			<order orderDate="15/09/2015">
+				
+				<salesRep>emp_2</salesRep>
+				<manager>emp_7</manager>
+				<secondLvlMgr>emp_5</secondLvlMgr>
+				<admin>emp_3</admin>
+				<supportEngineer>emp_4</supportEngineer>
+				<customer>Intel Corporation</customer>
+				<OfficeName>Hestingsh House</OfficeName>
+				<OfficeCode>4789</OfficeCode>
+				<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+				<add_line_2>Kolkata</add_line_2>
+				<state>West Bengal</state>
+				<saleType>Phone</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_1">
+						<quantity>5</quantity>
+						<rate>80000</rate>
+						<discountPercentage>6</discountPercentage>
+						<dutyPercentage>5</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of computer</splitRule>
+					</orderLineItem>
+					<orderLineItem product="prod_2">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>4</discountPercentage>
+						<dutyPercentage>2</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of smartphone</splitRule>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+			<order orderDate="28/03/2016">
+				
+				<salesRep>emp_5</salesRep>
+				<manager>null</manager>
+				<secondLvlMgr>emp_2</secondLvlMgr>
+				<admin>emp_6</admin>
+				<supportEngineer>emp_7</supportEngineer>
+				<customer>Microsoft</customer>
+				<OfficeName>Jefello International</OfficeName>
+				<OfficeCode>2341</OfficeCode>
+				<add_line_1>129/S,B.P.Nalli Rd</add_line_1>
+				<add_line_2>Bangalore</add_line_2>
+				<state>Karnataka</state>
+				<saleType>Counter</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_3">
+						<quantity>5</quantity>
+						<rate>40000</rate>
+						<discountPercentage>4</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of mobile</splitRule>
+					</orderLineItem>
+					<orderLineItem product="prod_6">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of computer</splitRule>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+			<order orderDate="27/03/2016">
+				
+				<salesRep>emp_3</salesRep>
+				<admin>emp_7</admin>
+				<manager>emp_9</manager>
+				<secondLvlMgr>null</secondLvlMgr>
+				<supportEngineer>emp_2</supportEngineer>
+				<customer>Microsoft</customer>
+				<OfficeName>Rythmic House</OfficeName>
+				<OfficeCode>6598</OfficeCode>
+				<add_line_1>19/B,C.I.T Rd</add_line_1>
+				<add_line_2>Surat</add_line_2>
+				<state>Gujarat</state>
+				<saleType>Online</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_7">
+						<quantity>8</quantity>
+						<rate>40000</rate>
+						<discountPercentage>2</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of mobile</splitRule>
+					</orderLineItem>
+					<orderLineItem product="prod_6">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of computer</splitRule>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+		</orders>
+	</Import>
+
+	<Import importDate="">
+		<importedBy>emp_9</importedBy>
+		<orderCounts>4</orderCounts>
+		<status>new</status>
+		<orders>
+			<order orderDate="15/09/2015">
+				
+				<salesRep>emp_2</salesRep>
+				<manager>null</manager>
+				<secondLvlMgr>null</secondLvlMgr>
+				<admin>emp_3</admin>
+				<supportEngineer>emp_4</supportEngineer>
+				<customer>Intel Corporation</customer>
+				<OfficeName>Rythmic House</OfficeName>
+				<OfficeCode>6598</OfficeCode>
+				<add_line_1>19/B,C.I.T Rd</add_line_1>
+				<add_line_2>Surat</add_line_2>
+				<state>Gujarat</state>
+				<saleType>Online</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_1">
+						<quantity>5</quantity>
+						<rate>80000</rate>
+						<discountPercentage>4</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of computer</splitRule>
+					</orderLineItem>
+					<orderLineItem product="prod_2">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of mobile</splitRule>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+			<order orderDate="14/09/2015">
+				
+				<salesRep>emp_5</salesRep>
+				<manager>null</manager>
+				<secondLvlMgr>null</secondLvlMgr>
+				<admin>emp_6</admin>
+				<supportEngineer>emp_7</supportEngineer>
+				<customer>Microsoft</customer>
+				<OfficeName>Hestingsh House</OfficeName>
+				<OfficeCode>4789</OfficeCode>
+				<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+				<add_line_2>Kolkata</add_line_2>
+				<state>West Bengal</state>
+				<saleType>Counter</saleType>
+				<orderLineItems>
+					<orderLineItem product="prod_4">
+						<quantity>5</quantity>
+						<rate>40000</rate>
+						<discountPercentage>4</discountPercentage>
+						<dutyPercentage>4</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of mobile</splitRule>
+					</orderLineItem>
+					<orderLineItem product="prod_2">
+						<quantity>5</quantity>
+						<rate>20000</rate>
+						<discountPercentage>5</discountPercentage>
+						<dutyPercentage>3</dutyPercentage>
+						<splitRule>Rule for getting commission on max sale of computer</splitRule>
+					</orderLineItem>
+				</orderLineItems>
+			</order>
+		</orders>
+	</Import>
+  <!--	<Import importDate="14/04/2015">
+		<importedBy>Tom</importedBy>
+		<orderCounts>6</orderCounts>
+		<status>verified</status>
+	</Import>
+	<Import importDate="31/08/2015">
+		<importedBy>Jerry</importedBy>
+		<orderCounts>8</orderCounts>
+		<status>verified</status>
+	</Import> -->
+</Imports>

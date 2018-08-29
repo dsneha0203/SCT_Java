@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<Employees>
+	<Employee Employeename="Harry">
+		<StartDate>31/03/2016</StartDate>
+		<Salary>25000</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="Jackson">
+		<StartDate>31/03/2016</StartDate>
+		<Salary>25000</Salary>
+		<OfficeName>Obeley Tower</OfficeName>
+		<OfficeCode>6542</OfficeCode>
+		<add_line_1>19/B,S.N.Banerjee Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="Tom">
+		<StartDate>18/09/2015</StartDate>
+		<Salary>15000</Salary>
+		<OfficeName>Jefello International</OfficeName>
+		<OfficeCode>2341</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Bangalore</add_line_2>
+		<state>Karnataka</state>
+		<managers>
+			<manager managerName="Harry">
+				<mgrSDate>18/09/2015</mgrSDate>
+				<mgrEDate>18/09/2015</mgrEDate>
+			</manager>
+			<manager managerName="Jackson">
+				<mgrSDate>18/09/2015</mgrSDate>
+				<mgrEDate>18/09/2015</mgrEDate>
+			</manager>
+		</managers>
+		<roles>
+			<role roleName="Analyst I">
+				<rolSDate>18/09/2015</rolSDate>
+				<rolEDate>18/09/2015</rolEDate>
+			</role>
+			<role roleName="Director Project Management">
+				<rolSDate>18/09/2015</rolSDate>
+				<rolEDate>18/09/2015</rolEDate>
+			</role>
+		</roles>
+	</Employee>
+	<Employee Employeename="Potter">
+		<StartDate>14/04/2015</StartDate>
+		<Salary>20000</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>6598</OfficeCode>
+		<add_line_1>19/B,C.I.T Rd</add_line_1>
+		<add_line_2>Surat</add_line_2>
+		<state>Gujarat</state>
+		<managers>
+			<manager managerName="Tom">
+				<mgrSDate>18/09/2015</mgrSDate>
+				<mgrEDate>18/09/2015</mgrEDate>
+			</manager>
+			<manager managerName="Harry">
+				<mgrSDate>18/09/2015</mgrSDate>
+				<mgrEDate>18/09/2015</mgrEDate>
+			</manager>
+		</managers>
+		<roles>
+			<role roleName="Analyst II">
+				<rolSDate>18/09/2015</rolSDate>
+				<rolEDate>18/09/2015</rolEDate>
+			</role>
+			<role roleName="Director Development">
+				<rolSDate>18/09/2015</rolSDate>
+				<rolEDate>18/09/2015</rolEDate>
+			</role>
+		</roles>
+	</Employee>
+	<Employee Employeename="Jerry">
+		<StartDate>31/08/2015</StartDate>
+		<Salary>22500</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="Ram">
+		<StartDate>31/08/2015</StartDate>
+		<Salary>22500</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="Rocky">
+		<StartDate>31/08/2015</StartDate>
+		<Salary>30000</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="John">
+		<StartDate>31/08/2015</StartDate>
+		<Salary>30000</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+	<Employee Employeename="Smith">
+		<StartDate>31/08/2015</StartDate>
+		<Salary>30000</Salary>
+		<OfficeName>Hestingsh House</OfficeName>
+		<OfficeCode>4789</OfficeCode>
+		<add_line_1>19/B,S.N.Bose Rd</add_line_1>
+		<add_line_2>Kolkata</add_line_2>
+		<state>West Bengal</state>
+	</Employee>
+</Employees>
