@@ -50,13 +50,13 @@ public class CalculateCompAmountSimpleInd {
 		CalculationAPI calcAPI = (CalculationAPI)context.getBean("calcApi");
 		
 		//save start and end dates in calc roster table
-//		System.out.println("Enter start date: ");
+//		System.out.println("Enter start date in dd/MM/yyyy format: ");
 //		String sDate1= new Scanner(System.in).next();
 		String sDate1 = args[0];
 		logger.debug("sDATE= "+sDate1);
 		startDate=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 		logger.debug("START DATE= "+startDate);
-//		System.out.println("Enter end date: ");
+//		System.out.println("Enter end date in dd/MM/yyyy format: ");
 //		String sDate2= new Scanner(System.in).next();		
 		String sDate2 = args[1];
 		logger.debug("eDATE= "+sDate2);
@@ -126,12 +126,30 @@ public class CalculateCompAmountSimpleInd {
 //									logger.debug("num of weeks= "+num);
 //									numTimes.put(details.getId(), num);
 //								}
+//								
+//								else if(freq.equals("monthly")) {
+//									long num=calcAPI.getFullMonths(planStartDate, planEndDate, startDate, endDate);
+//									logger.debug("num of months= "+num);
+//									numTimes.put(details.getId(), num);
+//								}
 								
-								if(freq.equals("monthly")) {
-									long num=calcAPI.getFullMonths(planStartDate, planEndDate, startDate, endDate);
-									logger.debug("num of months= "+num);
-									numTimes.put(details.getId(), num);
-								}
+//								 else if(freq.equals("quaterly")) {
+//									long num=calcAPI.getFullQuarters(planStartDate, planEndDate, startDate, endDate);
+//									logger.debug("num of quarters= "+num);
+//									numTimes.put(details.getId(), num);
+//								 }
+								
+//								 else if(freq.equals("half-yearly")) {
+//										long num=calcAPI.getFullHalves(planStartDate, planEndDate, startDate, endDate);
+//										logger.debug("num of halves= "+num);
+//										numTimes.put(details.getId(), num);
+//									}
+								
+								 if(freq.equals("annually")) {
+										long num=calcAPI.getFullYears(planStartDate, planEndDate, startDate, endDate);
+										logger.debug("num of years= "+num);
+										numTimes.put(details.getId(), num);
+									}
 								
 							}else {
 								logger.debug("FIXED RULE");

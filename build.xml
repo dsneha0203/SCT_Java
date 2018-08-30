@@ -241,8 +241,9 @@
 	<target name="calc" depends="compile, package">
 			<java classname="com.simpsoft.salesCommission.app.calculation.CalculateCompAmountSimpleInd"  fork="true"
 																           failonerror="true">
-																		<arg value="04/05/2018"/>
-																		<arg value="30/09/2018"/>
+																		<!-- dd/MM/yyyy -->
+																		<arg value="30/12/2017"/>
+																		<arg value="02/01/2020"/>
 																		<classpath refid="build.class.path" />
 																		<classpath path="${temp.dir.classes}" />
 																	</java> 
