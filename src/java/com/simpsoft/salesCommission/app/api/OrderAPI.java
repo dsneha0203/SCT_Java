@@ -933,15 +933,35 @@ public class OrderAPI {
 	
 	//get order detail from order line item id
 	public OrderDetail getOrderDetailFromLineItem(long lineItemId) {
+		OrderDetail ordDetail=null;
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
-		tx = session.beginTransaction();
+		try {
+			List orderDetailList = session.createQuery("FROM OrderDetail").list();
+			for (Iterator iterator = orderDetailList.iterator(); iterator.hasNext();) {
+				
+				OrderDetail orderDetail = (OrderDetail) iterator.next();
+				if(orderDetail.getOrderLineItems() != null){
+					for(OrderLineItems items : orderDetail.getOrderLineItems()) {
+						if(items.getId() == lineItemId) {
+							ordDetail = orderDetail;
+							break;
+						}
+					}
+				}  
+				
+			}
+			
+		}catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 		
-		String hql = "select Order_Id from OrderLineItems where id= :id ";
-		Query query = session.createQuery(hql);
-		query.setParameter(":id", lineItemId);
-		long orderDetailId = query.executeUpdate();
-		OrderDetail ordDetail = (OrderDetail) session.get(OrderDetail.class, orderDetailId);
+		
+		
 		return ordDetail;
 		
 	}

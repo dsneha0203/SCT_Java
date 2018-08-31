@@ -21,13 +21,21 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.simpsoft.salesCommission.app.model.CalculationRoster;
 import com.simpsoft.salesCommission.app.model.Frequency;
+import com.simpsoft.salesCommission.app.model.QualifyingClause;
+import com.simpsoft.salesCommission.app.model.Rule;
+import com.simpsoft.salesCommission.app.model.RuleAssignmentDetails;
+import com.simpsoft.salesCommission.app.model.RuleComposite;
+import com.simpsoft.salesCommission.app.model.RuleSimple;
 
 @Component
 public class CalculationAPI {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+		
 	
 	private static final Logger logger = Logger.getLogger(CalculationAPI.class);
 
@@ -455,4 +463,141 @@ public class CalculationAPI {
 		  
 	}
 	
+	
+	public List<Rule> getCompRuleDetails(RuleAssignmentAPI ruleAssAPI, RuleAPI ruleAPI,
+			Rule compRule) {
+		logger.debug("RULE TYPE = COMPOSITE");
+		RuleComposite composite = ruleAPI.findCompRule(compRule.getId());
+		logger.debug("COMPOSITE RULE ID= "+ composite.getId());
+		List<Rule> simpleRules = ruleAssAPI.getSimpleRuleList(composite.getId());
+		for(Rule simpRule : simpleRules) {								
+			RuleSimple ruleSimple = ruleAPI.findSimpleRule(simpRule.getId());
+			logger.debug("SIMPLE RULE NAME= "+ruleAPI.getRule(simpRule.getId()).getRuleName());
+			logger.debug("SIMPLE RULE ID= "+ruleSimple.getId());
+			List<QualifyingClause> clauses = ruleSimple.getQualifyingClause();
+			if(clauses != null) {
+				logger.debug("---QUALIFYING CLAUSE LIST---");
+				printQualClause(clauses);
+			}
+			
+		}
+		return simpleRules;
+	}
+	
+	public static void printQualClause(List<QualifyingClause> clauses) {
+		for(QualifyingClause clause : clauses) {
+			logger.debug("QUAL CLAUSE ID= "+clause.getId());
+			logger.debug("Field name= "+clause.getFieldList().getDisplayName());
+			logger.debug("Condition value= "+clause.getConditionList().getConditionValue());
+			if(clause.getAggregateFunctions() != null) {
+				logger.debug("Agg Func= "+clause.getAggregateFunctions().getFunctionName());
+			}
+			logger.debug("Not= "+clause.isNotFlag());
+			logger.debug("Value= "+clause.getValue());
+		}
+	}
+	
+	
+	public boolean checkValidity(RuleAssignmentAPI ruleAssAPI, long ruleAssDetailId, Date startDate2, Date endDate2) throws ParseException {
+		RuleAssignmentDetails assignmentDetails = ruleAssAPI.getRuleAssignmentDetail(ruleAssDetailId);
+		String validityType = assignmentDetails.getValidityType();
+		Date ruleAssDetStartDate = assignmentDetails.getStartDate();
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		String sd = format1.format(ruleAssDetStartDate);
+		ruleAssDetStartDate = format1.parse(sd);
+		logger.debug("ruleAssDetStartDate= "+ruleAssDetStartDate);
+		logger.debug("roster start date="+ startDate2);
+		Date ruleAssDetEndDate = assignmentDetails.getEndDate();
+		String ed = format1.format(ruleAssDetEndDate);
+		ruleAssDetEndDate = format1.parse(ed);
+		logger.debug("ruleAssDetEndDate= "+ruleAssDetEndDate);
+		logger.debug("roster end date= "+endDate2);
+		
+		if(validityType.equals("repeats")) {
+			if(ruleAssDetStartDate.equals(startDate2)){
+				logger.debug("plan start date = roster start date");
+				return true;
+			}
+			if(ruleAssDetEndDate.equals(endDate2)) {
+				logger.debug("plan end date = roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.before(startDate2) && ruleAssDetEndDate.after(endDate2)) {
+				logger.debug("plan start date is before roster start date and plan end date is after roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.before(startDate2) && ruleAssDetEndDate.after(startDate2)) {
+				logger.debug("plan start date is before roster start date and plan end date is after roster start date");
+				return true;
+			}
+			if(ruleAssDetStartDate.after(startDate2) && ruleAssDetEndDate.before(endDate2)) {
+				logger.debug("plan start date is after roster start date and plan end date is before roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.after(startDate2)&& ruleAssDetStartDate.before(endDate2) && ruleAssDetEndDate.after(endDate2)) {
+				logger.debug("plan start date is after roster start date but before roster end date and plan end date is after roster end date");
+				return true;
+			}
+						
+		}else {
+			// for fixed
+			if(ruleAssDetStartDate.equals(startDate2) && ruleAssDetEndDate.equals(endDate2)) {
+				logger.debug("plan start date = roster start date and plan end date = roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.after(startDate2) && ruleAssDetEndDate.equals(endDate2)) {
+				logger.debug("plan start date is after roster start date and plan end date= roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.equals(startDate2) && ruleAssDetEndDate.before(endDate2)) {
+				logger.debug("plan start date = roster start date and plan end date is before roster end date");
+				return true;
+			}
+			if(ruleAssDetStartDate.after(startDate2) && ruleAssDetEndDate.before(endDate2)) {
+				logger.debug("plan start date is after roster start date and plan end date is before roster end date");
+				return true;
+			}
+		}
+		
+
+		return false;
+	}
+	
+	
+	public void saveDates(Date startdate, Date enddate) {
+		logger.debug("---IN SAVE DATE METHOD---");
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		CalculationRoster calculationRoster = new CalculationRoster();
+		try {
+			tx = session.beginTransaction();
+			calculationRoster.setStartDate(startdate);
+			calculationRoster.setEndDate(enddate);
+			session.save(calculationRoster);
+			tx.commit();
+			logger.debug("---SAVED---");
+		}catch(HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		}finally {
+			session.close();
+	
+		}
+	}
+	
+	/**
+	 * @param ruleAPI
+	 * @param details
+	 */
+	public  List<QualifyingClause> getSimpRuleDetails( RuleAPI ruleAPI, Rule simpRule) {
+		logger.debug("RULE TYPE = SIMPLE");
+		RuleSimple ruleSimple = ruleAPI.findSimpleRule(simpRule.getId());
+		List<QualifyingClause> clauses = ruleSimple.getQualifyingClause();
+		if(clauses != null) {
+			logger.debug("---QUALIFYING CLAUSE LIST---");
+			printQualClause(clauses);
+		}
+		return clauses;
+	}
 }

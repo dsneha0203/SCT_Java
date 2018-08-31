@@ -415,13 +415,20 @@ public class SplitRuleAPI {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try {
-			tx = session.beginTransaction();
-			String hql = "select ORDER_LNITM_ID from OrderLineItemsSplit where id =:id ";
-			Query query = session.createQuery(hql);
-			query.setParameter(":id", lineSplitId);
-			long lineId = query.executeUpdate();
-			logger.debug("LINE ITEM ID FOUND= "+lineId);
-			items=(OrderLineItems) session.get(OrderLineItems.class, lineId);
+			List lineItemsList = session.createQuery("FROM OrderLineItems").list();
+			for (Iterator iterator = lineItemsList.iterator(); iterator.hasNext();) {
+				
+				OrderLineItems lineItem = (OrderLineItems) iterator.next();
+				if(lineItem.getOrderLineItemsSplit()!=null){
+					for(OrderLineItemsSplit itemsSplit : lineItem.getOrderLineItemsSplit()) {
+						if(itemsSplit.getId() == lineSplitId) {
+							items= lineItem;
+							break;
+						}
+					}
+				}  
+				
+			}
 			
 		}catch (HibernateException e) {
 			if (tx != null)

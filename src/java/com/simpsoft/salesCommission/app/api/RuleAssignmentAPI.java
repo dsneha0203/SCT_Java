@@ -832,27 +832,7 @@ public class RuleAssignmentAPI {
 		return ruleAsgList;
 	}
 	
-	public void saveDates(Date startdate, Date enddate) {
-		logger.debug("---IN SAVE DATE METHOD---");
-		Session session = sessionFactory.openSession();
-		Transaction tx = null;
-		CalculationRoster calculationRoster = new CalculationRoster();
-		try {
-			tx = session.beginTransaction();
-			calculationRoster.setStartDate(startdate);
-			calculationRoster.setEndDate(enddate);
-			session.save(calculationRoster);
-			tx.commit();
-			logger.debug("---SAVED---");
-		}catch(HibernateException e) {
-			if (tx != null)
-				tx.rollback();
-			e.printStackTrace();
-		}finally {
-			session.close();
 	
-		}
-	}
 	
 	// find list of simple rules of a composite rule
 	public List<Rule> getSimpleRuleList(long id){
