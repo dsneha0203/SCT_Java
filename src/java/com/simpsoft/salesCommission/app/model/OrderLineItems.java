@@ -44,7 +44,7 @@ public class OrderLineItems {
 	private  int dutyPercentage;
 
 	@Column(name = "subtotal")
-	private  float subtotal;
+	private  double subtotal;
 	
 /*	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "ORDR_LNSPLT_ID")
@@ -162,14 +162,14 @@ public class OrderLineItems {
 	/**
 	 * @return the subtotal
 	 */
-	public float getSubtotal() {
+	public double getSubtotal() {
 		return subtotal;
 	}
 
 	/**
 	 * @param subtotal the subtotal to set
 	 */
-	public void setSubtotal(float subtotal) {
+	public void setSubtotal(double subtotal) {
 		this.subtotal = subtotal;
 	}
 

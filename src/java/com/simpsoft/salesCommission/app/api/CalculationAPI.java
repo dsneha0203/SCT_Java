@@ -25,7 +25,9 @@ import com.simpsoft.salesCommission.app.model.CalculationRoster;
 import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.QualifyingClause;
 import com.simpsoft.salesCommission.app.model.Rule;
+import com.simpsoft.salesCommission.app.model.RuleAssignment;
 import com.simpsoft.salesCommission.app.model.RuleAssignmentDetails;
+import com.simpsoft.salesCommission.app.model.RuleAssignmentParameter;
 import com.simpsoft.salesCommission.app.model.RuleComposite;
 import com.simpsoft.salesCommission.app.model.RuleSimple;
 
@@ -600,4 +602,39 @@ public class CalculationAPI {
 		}
 		return clauses;
 	}
+
+	
+
+	public int getParameterValue(String param, long detailsId) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		RuleAssignmentDetails assignmentDetails = (RuleAssignmentDetails)session.get(RuleAssignmentDetails.class, detailsId);
+		List<RuleAssignmentParameter> assignmentParameters = assignmentDetails.getRuleAssignmentParameter();
+		
+		for(RuleAssignmentParameter assignmentParameter :assignmentParameters) {
+			if(assignmentParameter.getParameterName().equals(param)) {
+				if(assignmentParameter.getValueType().equals("default")) {
+					return Integer.parseInt(assignmentParameter.getDefaultValue());
+				}else if(assignmentParameter.getValueType().equals("overwrite")) {
+					return Integer.parseInt(assignmentParameter.getOverwriteValue());
+				}
+			}
+		}
+		return 0;
+	}
+
+	public long getAssignmentDetailId(long assgId, Rule satisfiedRule) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		RuleAssignment assignment = (RuleAssignment)session.get(RuleAssignment.class, assgId);
+		List<RuleAssignmentDetails> assignmentDetails = assignment.getRuleAssignmentDetails();
+		for(RuleAssignmentDetails assignmentDetails2 :assignmentDetails) {
+			if(assignmentDetails2.getRule().getRuleName().equals(satisfiedRule.getRuleName())) {
+				return assignmentDetails2.getId();
+			}
+		}
+		return 0;
+	}
+	
+	
 }

@@ -780,20 +780,20 @@ public class OrderAPI {
 									String product = node2.getAttributes().getNamedItem("product").getNodeValue();
 									logger.debug("product :" + product);
 
-									int quantity = Integer.parseInt(elem2.getElementsByTagName("quantity").item(0)
+									float quantity = Integer.parseInt(elem2.getElementsByTagName("quantity").item(0)
 											.getChildNodes().item(0).getNodeValue());
 									logger.debug("quantity :" + quantity);
 
-									int rate = Integer.parseInt(elem2.getElementsByTagName("rate").item(0)
+									float rate = Integer.parseInt(elem2.getElementsByTagName("rate").item(0)
 											.getChildNodes().item(0).getNodeValue());
 									logger.debug("rate :" + rate);
 
-									int discountPercentage = Integer
+									float discountPercentage = Integer
 											.parseInt(elem2.getElementsByTagName("discountPercentage").item(0)
 													.getChildNodes().item(0).getNodeValue());
 									logger.debug("discountPercentage :" + discountPercentage);
 
-									int dutyPercentage = Integer.parseInt(elem2.getElementsByTagName("dutyPercentage")
+									float dutyPercentage = Integer.parseInt(elem2.getElementsByTagName("dutyPercentage")
 											.item(0).getChildNodes().item(0).getNodeValue());
 									logger.debug("dutyPercentage :" + dutyPercentage);
 									
@@ -805,14 +805,14 @@ public class OrderAPI {
 //											.getChildNodes().item(0).getNodeValue());
 //									System.out.println("subtotal :" + subtotal);
 									
-									float subTotal = (1+(float)(dutyPercentage/100))*((1-(float)(discountPercentage/100))*(quantity*rate));
+									double subTotal = (1+(float)(dutyPercentage/100))*((1-(float)(discountPercentage/100))*(quantity*rate));
 
 									OrderLineItemsXML orderLineItem = new OrderLineItemsXML();
 									orderLineItem.setProduct(product);
-									orderLineItem.setQuantity(quantity);
-									orderLineItem.setRate(rate);
-									orderLineItem.setDiscountPercentage(discountPercentage);
-									orderLineItem.setDutyPercentage(dutyPercentage);
+									orderLineItem.setQuantity((int) quantity);
+									orderLineItem.setRate((int) rate);
+									orderLineItem.setDiscountPercentage((int) discountPercentage);
+									orderLineItem.setDutyPercentage((int) dutyPercentage);
 									orderLineItem.setSplitRule(splitRule);
 									orderLineItem.setSubtotal(subTotal);
 									orderLineItemList.add(orderLineItem);
