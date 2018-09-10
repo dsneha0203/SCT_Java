@@ -9,7 +9,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Component;
 
 import com.simpsoft.salesCommission.app.model.CalculationRoster;
 import com.simpsoft.salesCommission.app.model.Frequency;
+import com.simpsoft.salesCommission.app.model.OrderDetail;
+import com.simpsoft.salesCommission.app.model.OrderLineItems;
 import com.simpsoft.salesCommission.app.model.QualifyingClause;
 import com.simpsoft.salesCommission.app.model.Rule;
 import com.simpsoft.salesCommission.app.model.RuleAssignment;
@@ -37,6 +41,7 @@ public class CalculationAPI {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	
 		
 	
 	private static final Logger logger = Logger.getLogger(CalculationAPI.class);
@@ -45,7 +50,7 @@ public class CalculationAPI {
 		sessionFactory = factory;
 	}
 
-	public long getFullWeeks(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) {
+	public Map<Date,Date> getFullWeeks(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
 		Date endDate;
 		if(planStartDate.equals(rosterStartDate)) {
@@ -105,11 +110,35 @@ public class CalculationAPI {
 	    LocalDateTime startDate1 = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
 	    LocalDateTime endDate1 = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
 
-	    return ChronoUnit.WEEKS.between(startDate1, endDate1);
+	    long num= ChronoUnit.WEEKS.between(startDate1, endDate1);
+	    Map<Date, Date> weekDates = getWeekStartEndDates(d1, num);
+	    for(Map.Entry<Date, Date> dates : weekDates.entrySet()) {
+	    	logger.debug("WEEK START DATE= "+dates.getKey()+" WEEK END DATE= "+dates.getValue());
+	    }
+	    return weekDates;
 	}
 	
+	public Map<Date,Date> getWeekStartEndDates(Calendar d1, long num) throws ParseException{
+		Map<Date,Date> dates = new HashMap<>();
+		//generate the start and end dates of each week
+		for(int i=0; i<num ; i++) {
+			Date startDate = d1.getTime();
+			 d1.add(Calendar.DAY_OF_WEEK, 6);
+			 Date endDate = d1.getTime();
+			 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+			 String sd = format1.format(startDate);
+			 startDate = format1.parse(sd);
+			 String ed = format1.format(endDate);
+			 endDate = format1.parse(ed);
+			 dates.put(startDate, endDate);
+			 d1.add(Calendar.DAY_OF_WEEK, 1);
+			 
+			
+		}
+		return dates;
+	}
 	
-	public long getFullMonths(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) {
+	public Map<Date,Date> getFullMonths(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
 		Date endDate;
 		if(planStartDate.equals(rosterStartDate)) {
@@ -143,6 +172,7 @@ public class CalculationAPI {
 		logger.debug("dateOfStartMonth = "+dateOfStartMonth);
 		
 		if(dateOfStartMonth != 1) {
+			d1.set(Calendar.DATE, 1);
 			d1.add(Calendar.MONTH, 1);
 		}
 		
@@ -159,14 +189,42 @@ public class CalculationAPI {
 	    LocalDateTime startDate1 = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
 	    LocalDateTime endDate1 = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
 	    
-		return ChronoUnit.MONTHS.between(startDate1, endDate1);
+	    long num= ChronoUnit.MONTHS.between(startDate1, endDate1);
+	    Map<Date, Date> monthDates = getMonthStartEndDates(d1, num);
+	    for(Map.Entry<Date, Date> dates : monthDates.entrySet()) {
+	    	logger.debug("MONTH START DATE= "+dates.getKey()+" MONTH END DATE= "+dates.getValue());
+	    }
+	    
+		return monthDates;
 		
 		  
 	}
 	
+	public Map<Date,Date> getMonthStartEndDates(Calendar d1, long num) throws ParseException{
+		Map<Date,Date> dates = new HashMap<>();
+		//generate the start and end dates of each week
+		for(int i=0; i<num ; i++) {
+			 Date startDate = d1.getTime();
+			 logger.debug("START DATE OF MONTH= "+startDate);
+			 Calendar cal = Calendar.getInstance();
+		     cal.setTime(startDate);
+		     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		     Date endDate = cal.getTime();
+		     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+			 String sd = format1.format(startDate);
+			 startDate = format1.parse(sd);
+			 String ed = format1.format(endDate);
+			 endDate = format1.parse(ed);
+			 dates.put(startDate, endDate);
+		     d1.add(Calendar.DAY_OF_WEEK,  cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			 
+			
+		}
+		return dates;
+	}
 	
 	@SuppressWarnings("deprecation")
-	public long getFullQuarters(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
+	public Map<Date,Date> getFullQuarters(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
 		Date endDate;
 		if(planStartDate.equals(rosterStartDate)) {
@@ -192,7 +250,7 @@ public class CalculationAPI {
 		logger.debug("end date to calculate till= "+endDate);
 		Calendar d1 = Calendar.getInstance();
 		d1.setTime(startDate);
-		 
+		
 		Calendar d2 = Calendar.getInstance();
 		d2.setTime(endDate);
 		
@@ -298,14 +356,85 @@ public class CalculationAPI {
 			year++;
 			startDate= new Date("01/01/"+year);
 		}
-		
-		return total_quarts;		
+		Map<Date, Date> quarterDates = getQuarterStartEndDates(d1, total_quarts);
+	    for(Map.Entry<Date, Date> dates : quarterDates.entrySet()) {
+	    	logger.debug("QUARTER START DATE= "+dates.getKey()+" QUARTER END DATE= "+dates.getValue());
+	    }
+	    
+		return quarterDates;		
 		  
 	}
 	
+	public Map<Date,Date> getQuarterStartEndDates(Calendar d1, long num) throws ParseException{
+		Map<Date,Date> dates = new HashMap<>();
+		//generate the start and end dates of each week
+		for(int i=0; i<num ; i++) {
+			int startCalDate = d1.get(Calendar.DATE);
+			logger.debug("startCalDate= "+startCalDate);
+			int startMonth= d1.get(Calendar.MONTH);
+			logger.debug("startMonth= "+startMonth);
+			if(startCalDate != 1 ) {
+				
+				if(startMonth == 0) {
+					d1.set(Calendar.MONTH, 3);
+				}
+				else if(startMonth>0 && startMonth<3) {
+					d1.set(Calendar.MONTH, 3);
+				}
+				else if(startMonth==3) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				else if(startMonth >3 && startMonth <6) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				else if(startMonth == 6) {
+					d1.set(Calendar.MONTH, 9);
+				}
+				else if(startMonth>6 && startMonth<9) {
+					d1.set(Calendar.MONTH, 9);
+				}
+				else if(startMonth >= 9) {
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);					
+				}
+				
+				d1.set(Calendar.DAY_OF_MONTH,1);
+			}else {
+				if(startMonth>0 && startMonth<3) {
+					d1.set(Calendar.MONTH, 3);
+				}
+				else if(startMonth >3 && startMonth <6) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				else if(startMonth>6 && startMonth<9) {
+					d1.set(Calendar.MONTH, 9);
+				}
+				else if(startMonth > 9) {
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);					
+				}
+			}
+			 Date startDate = d1.getTime();			 
+			 logger.debug("START DATE OF QUARTER= "+startDate);			 		 
+			 Calendar cal = d1;
+			 cal.add(Calendar.MONTH, 2);
+		     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		     Date endDate = cal.getTime();
+		     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+			 String sd = format1.format(startDate);
+			 startDate = format1.parse(sd);
+			 String ed = format1.format(endDate);
+			 endDate = format1.parse(ed);
+			 dates.put(startDate, endDate);
+		     d1.add(Calendar.DAY_OF_WEEK,  1);
+			 
+			
+		}
+		return dates;
+	}
 	
 	@SuppressWarnings("deprecation")
-	public long getFullHalves(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
+	public Map<Date,Date> getFullHalves(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
 		Date endDate;
 		if(planStartDate.equals(rosterStartDate)) {
@@ -389,13 +518,69 @@ public class CalculationAPI {
 			year++;
 			startDate= new Date("01/01/"+year);
 		}
-		
-		return total_halves;		
+		Map<Date, Date> halfDates = getHalfStartEndDates(d1, total_halves);
+	    for(Map.Entry<Date, Date> dates : halfDates.entrySet()) {
+	    	logger.debug("HALF START DATE= "+dates.getKey()+" HALF END DATE= "+dates.getValue());
+	    }
+	    
+		return halfDates;		
 		  
 	}
 	
+	public Map<Date,Date> getHalfStartEndDates(Calendar d1, long num) throws ParseException{
+		Map<Date,Date> dates = new HashMap<>();
+		//generate the start and end dates of each week
+		for(int i=0; i<num ; i++) {
+			int startCalDate = d1.get(Calendar.DATE);
+			logger.debug("startCalDate= "+startCalDate);
+			int startMonth= d1.get(Calendar.MONTH);
+			logger.debug("startMonth= "+startMonth);
+			if(startCalDate != 1 ) {
+				
+				if(startMonth == 0) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				else if(startMonth>0 && startMonth<6) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				else if(startMonth == 6 || startMonth > 6 ) {
+				
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);					
+				}
+				
+				d1.set(Calendar.DAY_OF_MONTH,1);
+			}else {
+				if(startMonth>0 && startMonth<6) {
+					d1.set(Calendar.MONTH, 6);
+				}
+				
+				else if(startMonth > 6) {
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);					
+				}
+			}
+			 Date startDate = d1.getTime();			 
+			 logger.debug("START DATE OF HALF= "+startDate);			 		 
+			 Calendar cal = d1;
+			 cal.add(Calendar.MONTH, 5);
+		     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		     Date endDate = cal.getTime();
+		     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+			 String sd = format1.format(startDate);
+			 startDate = format1.parse(sd);
+			 String ed = format1.format(endDate);
+			 endDate = format1.parse(ed);
+			 dates.put(startDate, endDate);
+		     d1.add(Calendar.DAY_OF_WEEK,  1);
+			 
+			
+		}
+		return dates;
+	}
+	
 	@SuppressWarnings("deprecation")
-	public long getFullYears(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
+	public Map<Date,Date> getFullYears(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
 		Date endDate;
 		if(planStartDate.equals(rosterStartDate)) {
@@ -461,10 +646,52 @@ public class CalculationAPI {
 			startDate= new Date("01/01/"+year);
 		}
 		
-		return total_years;		
+		Map<Date, Date> yearDates = getYearStartEndDates(d1, total_years);
+	    for(Map.Entry<Date, Date> dates : yearDates.entrySet()) {
+	    	logger.debug("ANNUAL START DATE= "+dates.getKey()+" ANNUAL END DATE= "+dates.getValue());
+	    }
+		
+		return yearDates;		
 		  
 	}
 	
+	public Map<Date,Date> getYearStartEndDates(Calendar d1, long num) throws ParseException{
+		Map<Date,Date> dates = new HashMap<>();
+		//generate the start and end dates of each week
+		for(int i=0; i<num ; i++) {
+			int startCalDate = d1.get(Calendar.DATE);
+			logger.debug("startCalDate= "+startCalDate);
+			int startMonth= d1.get(Calendar.MONTH);
+			logger.debug("startMonth= "+startMonth);
+			if(startCalDate != 1 ) {
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);				
+					d1.set(Calendar.DAY_OF_MONTH,1);
+			}else {			
+				
+				if(startMonth != 0) {
+					d1.set(Calendar.MONTH, 0);
+					d1.add(Calendar.YEAR, 1);					
+				}
+			}
+			 Date startDate = d1.getTime();			 
+			 logger.debug("START DATE OF YEAR= "+startDate);			 		 
+			 Calendar cal = d1;
+			 cal.add(Calendar.MONTH, 11);
+		     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		     Date endDate = cal.getTime();
+		     SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+			 String sd = format1.format(startDate);
+			 startDate = format1.parse(sd);
+			 String ed = format1.format(endDate);
+			 endDate = format1.parse(ed);
+			 dates.put(startDate, endDate);
+		     d1.add(Calendar.DAY_OF_WEEK,  1);
+			 
+			
+		}
+		return dates;
+	}
 	
 	public List<Rule> getCompRuleDetails(RuleAssignmentAPI ruleAssAPI, RuleAPI ruleAPI,
 			Rule compRule) {
@@ -636,5 +863,15 @@ public class CalculationAPI {
 		return 0;
 	}
 	
+	
+	public boolean checkLineItemDate(OrderLineItems lineItem, Date ruleCalcStartDate, Date ruleCalcEndDate) {
+		logger.debug("CHECK LINE ITEM ID = "+ lineItem.getId());
+		OrderDetail orderDetail = new OrderAPI().getOrderDetailFromLineItem(lineItem.getId());
+		logger.debug("CHECK ORDER DETAIL ID = "+orderDetail.getId());
+		Date lineItemOrderDate = orderDetail.getOrderDate();
+		
+		
+		return ruleCalcStartDate.compareTo(lineItemOrderDate) * lineItemOrderDate.compareTo(ruleCalcEndDate) >= 0;
+	}
 	
 }

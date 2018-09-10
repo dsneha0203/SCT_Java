@@ -933,6 +933,7 @@ public class OrderAPI {
 	
 	//get order detail from order line item id
 	public OrderDetail getOrderDetailFromLineItem(long lineItemId) {
+		logger.debug("---FINDING ORDER DETAIL---");
 		OrderDetail ordDetail=null;
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;

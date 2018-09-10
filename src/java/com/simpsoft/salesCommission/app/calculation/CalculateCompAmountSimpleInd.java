@@ -48,9 +48,14 @@ public class CalculateCompAmountSimpleInd {
 	private static List<Rule> qualifiedRuleListOfEmp = null;
 	private static Map<Long, List<Rule>> rule_ruleassg = null;
 	private static List<Rule> listRules = null;
+	private static List<List<Double>> sum_ordTotal_Qty_list_main = null;
 	private static List<Double> sum_ordTotal_Qty_list = null;
-	private static HashMap<Rule, List<Double>> rule_ordTotal_qty = null;
-	private static HashMap<Long,HashMap<Rule, List<Double>>> empAssg_rule_ordTotal_qty = null;
+	private static HashMap<Rule, List<List<Double>>> rule_ordTotal_qty = null;
+	private static HashMap<Long,HashMap<Rule, List<List<Double>>>> empAssg_rule_ordTotal_qty = null;
+	private static Map<Date,Date> freqDates =null;
+	private static Map<Rule,Map<Date,Date>> rule_freq_map = null;
+	private static int index;
+	private static HashMap<Rule, List<Double>> rule_output_map = null;
 	
 	public static void main(String[] args) throws ParseException, ScriptException {
 		
@@ -105,11 +110,12 @@ public class CalculateCompAmountSimpleInd {
 				qualifiedRuleListOfEmp = new ArrayList<>();
 				List<Rule> rulesAssigned = new ArrayList<>();
 				logger.debug("RuleAssignment id = "+ assignment.getId());
-				HashMap<Long, Long> numTimes = new HashMap<>();
+//				HashMap<Long, Long> numTimes = new HashMap<>();
 				rule_ruleassg = new HashMap<Long, List<Rule>>();
 				listRules = new ArrayList<Rule>();
-				rule_ordTotal_qty = new HashMap<Rule, List<Double>>();
-				empAssg_rule_ordTotal_qty = new HashMap<Long, HashMap<Rule,List<Double>>>();
+				rule_ordTotal_qty = new HashMap<Rule, List<List<Double>>>();
+				empAssg_rule_ordTotal_qty = new HashMap<Long, HashMap<Rule,List<List<Double>>>>();
+				rule_freq_map = new HashMap<Rule,Map<Date,Date>>();
 				
 					List<RuleAssignmentDetails> assignmentDetails = assignment.getRuleAssignmentDetails();
 					for(RuleAssignmentDetails details : assignmentDetails) {
@@ -140,39 +146,47 @@ public class CalculateCompAmountSimpleInd {
 								long freqId = details.getFrequency().getId();
 								String freq = details.getFrequency().getFrequencyName();
 								logger.debug("FREQ= "+freq);
+								
 								if(freq.equals("weekly")) {
-									long num= calcAPI.getFullWeeks(planStartDate, planEndDate, startDate, endDate);
-									logger.debug("num of weeks= "+num);
-									numTimes.put(details.getId(), num);
+									freqDates= calcAPI.getFullWeeks(planStartDate, planEndDate, startDate, endDate);
+									rule_freq_map.put(details.getRule(), freqDates);
+//									logger.debug("num of weeks= "+num);
+//									numTimes.put(details.getId(), num);
+									
+									
 								}
 								
 								else if(freq.equals("monthly")) {
-									long num=calcAPI.getFullMonths(planStartDate, planEndDate, startDate, endDate);
-									logger.debug("num of months= "+num);
-									numTimes.put(details.getId(), num);
+									freqDates=calcAPI.getFullMonths(planStartDate, planEndDate, startDate, endDate);
+									rule_freq_map.put(details.getRule(), freqDates);
+//									logger.debug("num of months= "+num);
+//									numTimes.put(details.getId(), num);
 								}
 								
 								 else if(freq.equals("quaterly")) {
-									long num=calcAPI.getFullQuarters(planStartDate, planEndDate, startDate, endDate);
-									logger.debug("num of quarters= "+num);
-									numTimes.put(details.getId(), num);
+									 freqDates=calcAPI.getFullQuarters(planStartDate, planEndDate, startDate, endDate);
+									 rule_freq_map.put(details.getRule(), freqDates);
+//									logger.debug("num of quarters= "+num);
+//									numTimes.put(details.getId(), num);
 								 }
 								
 								 else if(freq.equals("half-yearly")) {
-										long num=calcAPI.getFullHalves(planStartDate, planEndDate, startDate, endDate);
-										logger.debug("num of halves= "+num);
-										numTimes.put(details.getId(), num);
+									 freqDates=calcAPI.getFullHalves(planStartDate, planEndDate, startDate, endDate);
+									 rule_freq_map.put(details.getRule(), freqDates);
+//										logger.debug("num of halves= "+num);
+//										numTimes.put(details.getId(), num);
 									}
 								
 								else if(freq.equals("annually")) {
-										long num=calcAPI.getFullYears(planStartDate, planEndDate, startDate, endDate);
-										logger.debug("num of years= "+num);
-										numTimes.put(details.getId(), num);
+									freqDates=calcAPI.getFullYears(planStartDate, planEndDate, startDate, endDate);
+									rule_freq_map.put(details.getRule(), freqDates);
+//										logger.debug("num of years= "+num);
+//										numTimes.put(details.getId(), num);
 									}
 								
 							}else {
 								logger.debug("FIXED RULE");
-								numTimes.put(details.getId(), (long) 1);
+//								numTimes.put(details.getId(), (long) 1);
 							}
 							
 							
@@ -180,7 +194,7 @@ public class CalculateCompAmountSimpleInd {
 							counter=counter+1;
 							
 						}else {
-							numTimes.put(details.getId(), (long) 0);
+//							numTimes.put(details.getId(), (long) 0);
 						}
 						
 					}
@@ -205,21 +219,65 @@ public class CalculateCompAmountSimpleInd {
 								empLineItemsList.add(items);
 							}
 						}
+						logger.debug("empLineItemsList size = "+empLineItemsList.size());
+						for(OrderLineItems items : empLineItemsList) {
+							logger.debug("IN LIST LINE ITEM= "+items.getId());
+						}
 						
 						// compare line item list with qual clause list of each rule
 						for(Rule rule :rulesAssigned) {
+							Date ruleCalcStartDate=new Date();
+							Date ruleCalcEndDate=new Date();
+							sum_ordTotal_Qty_list_main =new ArrayList<>();
 							
-							compareLineItem(calcAPI, orderAPI, ruleAPI, empLineItemsList, rule);
-							logger.debug("rule_ordTotal_qty size= "+rule_ordTotal_qty.size());
-							for(Map.Entry<Rule, List<Double>> entry : rule_ordTotal_qty.entrySet()) {
-								Rule key_rule = entry.getKey();
-								logger.debug("KEY RULE NAME= "+key_rule.getRuleName());
-								List<Double> values = entry.getValue();
-								for(Double value : values) {
-									logger.debug("TEST VALUE= "+value);
+							for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
+								Rule keyRule = rule_dates_map.getKey();
+								if(keyRule == rule) {
+									
+									Map<Date,Date> dates = rule_dates_map.getValue();
+									for(Map.Entry<Date, Date> entry2 : dates.entrySet()) {
+										List<OrderLineItems> qualifiedLineItemsList = new ArrayList<>();
+										ruleCalcStartDate = entry2.getKey();
+										ruleCalcEndDate = entry2.getValue();
+										logger.debug("ruleCalcStartDate= "+ruleCalcStartDate);
+										logger.debug("ruleCalcEndDate= "+ruleCalcEndDate);
+										
+										//filter line items based on ruleCalcStartDate and ruleCalcEndDate
+										for(OrderLineItems items : empLineItemsList) {
+											boolean qualified= calcAPI.checkLineItemDate(items, ruleCalcStartDate, ruleCalcEndDate);
+											if(qualified == true) {
+												logger.debug(items.getId()+"is qualified for rule= "+rule.getRuleName()+"for "
+														+ "rule calc start date= "+ruleCalcStartDate+" and rule calc "
+																+ "end date = "+ruleCalcEndDate);
+												qualifiedLineItemsList.add(items);
+											}
+										}								
+										if(!qualifiedLineItemsList.isEmpty()) {
+											compareLineItem(calcAPI, orderAPI, ruleAPI, qualifiedLineItemsList, rule);
+											logger.debug("rule_ordTotal_qty size= "+rule_ordTotal_qty.size());
+											for(Map.Entry<Rule, List<List<Double>>> entry : rule_ordTotal_qty.entrySet()) {
+												Rule key_rule = entry.getKey();
+												logger.debug("KEY RULE NAME= "+key_rule.getRuleName());
+												List<List<Double>> values = entry.getValue();
+												for(List<Double> valueList : values) {
+													for(Double value : valueList) {
+														logger.debug("TEST VALUE= "+value);
+													}
+												}
+												
+												
+											}
+										}
+										
+										
+									}
 								}
 								
+								
+								
+								
 							}
+							
 							
 						}
 						
@@ -230,9 +288,14 @@ public class CalculateCompAmountSimpleInd {
 			}
 			if(qualifiedRuleListOfEmp != null) {
 				if(qualifiedRuleListOfEmp.size() > 0 ) {
+					logger.debug(qualifiedRuleListOfEmp.size()+" RULES ARE SATISFIED FOR EMP ID= "+emp.getId());
 					logger.debug("LIST OF SATISFIED RULES FOR EMP ID = "+emp.getId());
+					String prevRule = "";
 					for(Rule satisfiedRule : qualifiedRuleListOfEmp) {
+						
+						ArrayList<Double> paramValues = new ArrayList<>();
 						logger.debug("SATISFIED SIMPLE RULE NAME= "+satisfiedRule.getRuleName());
+						
 						if(satisfiedRule.getCompensationType().equals("Fixed")) {
 							logger.debug("fixed value= "+ satisfiedRule.getFixedCompValue());
 							logger.debug("COMPENSATION AMOUNT= "+satisfiedRule.getFixedCompValue());
@@ -240,12 +303,59 @@ public class CalculateCompAmountSimpleInd {
 							String formula = satisfiedRule.getCompensationFormula();
 							logger.debug("ORIGINAL FORMULA= "+formula);
 							String[] params = satisfiedRule.getCompensationParameter().split(",");
-							ArrayList<Double> paramValues = new ArrayList<>();
-							logger.debug("PARAMS= ");
-							for(String param : params) {
+							
+							logger.debug("PARAMS LIST ");
+							for(String param:params) {
+								
+							
 								logger.debug("PARAM NAME= "+param);
 								
-								if(!param.equalsIgnoreCase("$RULE_OUTPUT")){
+								if(param.equalsIgnoreCase("$RULE_OUTPUT")){							
+									
+									
+									logger.debug("empAssg_rule_ordTotal_qty size= "+empAssg_rule_ordTotal_qty.size());
+									
+									// code for rule output
+									double rule_output=0;
+									RuleSimple ruleSimple = ruleAPI.findSimpleRule(satisfiedRule.getId());
+									String agg_func_name = ruleSimple.getAggregateFunctions().getFunctionName();
+									logger.debug("agg_func_name= "+agg_func_name);
+									if(agg_func_name.equals("sum")) {
+											
+											for(Map.Entry<Long, HashMap<Rule, List<List<Double>>>> entry : empAssg_rule_ordTotal_qty.entrySet()) {
+												rule_output_map=new HashMap<Rule, List<Double>>();
+												List<Double> rule_output_list = new ArrayList<>();
+												HashMap<Rule, List<List<Double>>> rule_ord_qty_list = entry.getValue();
+												for(Map.Entry<Rule, List<List<Double>>> entry2 : rule_ord_qty_list.entrySet()) {
+													Rule rule = entry2.getKey();
+													
+													if(rule.getRuleName().equals(satisfiedRule.getRuleName())) {
+														
+															logger.debug("ADDED KEY RULE= "+rule.getRuleName());
+															
+															List<List<Double>> values = entry2.getValue();
+															for(List<Double> valueList : values) {
+																for(Double value : valueList) {
+																	logger.debug("ADDED VALUE= "+value);
+																}
+																logger.debug("field name= "+ ruleSimple.getField());
+																if(ruleSimple.getField().equalsIgnoreCase("Order Total")) {
+																	rule_output = valueList.get(0);
+																}else {
+																	rule_output = valueList.get(1);
+																}
+																logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
+//																paramValues.add(rule_output);
+																rule_output_list.add(rule_output);
+															}	
+															rule_output_map.put(rule, rule_output_list);
+													}
+												}
+											}
+											
+									}
+									
+								}else {
 									if(rule_ruleassg != null && !rule_ruleassg.isEmpty()) {
 										for(Map.Entry<Long, List<Rule>> entry : rule_ruleassg.entrySet()) {
 											long assgId = entry.getKey();
@@ -260,62 +370,90 @@ public class CalculateCompAmountSimpleInd {
 														int param_val = calcAPI.getParameterValue(param, detailsId);
 														logger.debug("PARAM VALUE= "+param_val);
 														paramValues.add((double)param_val);
+														
+														
 													}
-													
+													break;
 												}
 											}		
 											
 										}
 									}
-								}else {
-									logger.debug("empAssg_rule_ordTotal_qty size= "+empAssg_rule_ordTotal_qty.size());
+							
 									
-									// code for rule output
-									double rule_output=0;
-									RuleSimple ruleSimple = ruleAPI.findSimpleRule(satisfiedRule.getId());
-									String agg_func_name = ruleSimple.getAggregateFunctions().getFunctionName();
-									logger.debug("agg_func_name= "+agg_func_name);
-									if(agg_func_name.equals("sum")) {
-										
-											for(Map.Entry<Long, HashMap<Rule, List<Double>>> entry : empAssg_rule_ordTotal_qty.entrySet()) {
-												HashMap<Rule, List<Double>> rule_ord_qty_list = entry.getValue();
-												for(Map.Entry<Rule, List<Double>> entry2 : rule_ord_qty_list.entrySet()) {
-													Rule rule = entry2.getKey();
-													
-													if(rule.getRuleName().equals(satisfiedRule.getRuleName())) {
-															logger.debug("ADDED KEY RULE= "+rule.getRuleName());
-															List<Double> values = entry2.getValue();
-															for(Double value : values) {
-																logger.debug("ADDED VALUE= "+value);
-															}
-															logger.debug("field name= "+ ruleSimple.getField());
-															if(ruleSimple.getField().equalsIgnoreCase("Order Total")) {
-																rule_output = values.get(0);
-															}else {
-																rule_output = values.get(1);
-															}
-													}
-												}
-											}
-										
-									}
-									logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
-									paramValues.add(rule_output);
 								}
 							}
 							
-							// replace parameter and rule output values in formula
-							for(int i=0; i< paramValues.size(); i++) {
-								String val = String.valueOf(paramValues.get(i));
-								 formula= formula.replace("$"+(i+1), val);
+							if(!prevRule.equalsIgnoreCase(satisfiedRule.getRuleName())) {
+								for(Map.Entry<Rule, List<Double>> entry : rule_output_map.entrySet()) {
+									Rule rule= entry.getKey();
+									if(rule == satisfiedRule) {
+											
+											List<Double> values = entry.getValue();
+											for(Double value : values) {
+												int count_loop = 0;
+												
+												ArrayList<Double> newParamValues = new ArrayList<>();
+												newParamValues.addAll(paramValues);
+												for(int a= 0; a<params.length; a++) {
+													String param = params[a];
+													if(param.equalsIgnoreCase("$RULE_OUTPUT")) {
+														newParamValues.add(a, value);
+														
+														
+													}
+												}
+												
+												Object compAmt= replaceAndCalcCompAmt(newParamValues,formula);
+												
+												// get rule start and end calc dates
+												 for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
+													Rule keyRule = rule_dates_map.getKey();
+													if(keyRule == rule) {
+														
+														Date ruleCalcStartDate=new Date();
+														Date ruleCalcEndDate=new Date();
+														Map<Date,Date> dates = rule_dates_map.getValue();
+														outer: for(Map.Entry<Date, Date> entry2 : dates.entrySet()) {
+															
+															if(count_loop !=0) {
+																for(int i=1; i<= count_loop; i++) {
+																	continue outer;
+																}
+															}
+															
+															ruleCalcStartDate = entry2.getKey();
+															ruleCalcEndDate = entry2.getValue();
+															
+															
+															
+															logger.debug("---DATA TO BE SAVED---");
+															logger.debug("EMP ID = "+emp.getId());
+															logger.debug("RULE ID= "+rule.getId());
+															logger.debug("CALC START DATE= "+ruleCalcStartDate);
+															logger.debug("CALC END DATE= "+ruleCalcEndDate);
+															logger.debug("COMP AMT= "+compAmt);
+															
+															
+															count_loop+=1;
+															break;
+															
+														}
+													}
+													
+												}
+												
+											}
+											
+									}
+									prevRule= satisfiedRule.getRuleName();
+								}
 							}
 							
-							//evaluate the formula
-								logger.debug("NEW FORMULA= "+formula);
-								ScriptEngineManager manager = new ScriptEngineManager();
-								ScriptEngine engine = manager.getEngineByName("js");
-								Object result = engine.eval(formula);
-								logger.debug("COMPENSATION AMOUNT= "+result);
+							
+							
+							
+							
 							
 						}
 					}
@@ -332,8 +470,35 @@ public class CalculateCompAmountSimpleInd {
 		
 	}
 
+	private static Object replaceAndCalcCompAmt(ArrayList<Double> paramValues, String formula) throws ScriptException {
+		// print paramValues
+		logger.debug("---PARAM VALUES----");
+		for(int i=0; i<paramValues.size(); i++) {
+			logger.debug("paramVal= "+paramValues.get(i));
+		}
+		
+		
+		
+		// replace parameter and rule output values in formula
+		for(int i=0; i< paramValues.size(); i++) {
+			String val = String.valueOf(paramValues.get(i));
+			 formula= formula.replace("$"+(i+1), val);
+		}
+		
+		//evaluate the formula
+			logger.debug("NEW FORMULA= "+formula);
+			ScriptEngineManager manager = new ScriptEngineManager();
+			ScriptEngine engine = manager.getEngineByName("js");
+			Object result = engine.eval(formula);
+			logger.debug("COMPENSATION AMOUNT= "+result);
+			
+			return result;
+		
+		
+	}
+
 	private static void compareLineItem(CalculationAPI calcAPI,OrderAPI orderAPI,RuleAPI ruleAPI,
-			List<OrderLineItems> empLineItemsList, Rule rule) {
+			List<OrderLineItems> qualifiedLineItemsList, Rule rule) {
 		if(rule.getRuleType().equalsIgnoreCase("simple")){
 			
 			//check whether the simple rule is individual
@@ -358,10 +523,10 @@ public class CalculateCompAmountSimpleInd {
 				
 				List<OrderLineItems> filteredLineItemsList = new ArrayList<>();
 				if(non_agg_counter == 0) {
-					filteredLineItemsList = empLineItemsList;
+					filteredLineItemsList = qualifiedLineItemsList;
 				}else {				
 					//compare each line item with all the simple qual clauses
-					for(OrderLineItems items : empLineItemsList) {					
+					for(OrderLineItems items : qualifiedLineItemsList) {					
 						boolean isSatisfied = checkLineItem(orderAPI, items, nonAggQualList);
 						logger.debug("isSatisfied= "+isSatisfied);
 						if(isSatisfied == true) {
@@ -369,6 +534,12 @@ public class CalculateCompAmountSimpleInd {
 						}					
 					}
 				}
+				logger.debug("FILTEREDLINEITEMSLIST FOR RULE = "+rule.getRuleName());
+				for(OrderLineItems filteredItem : filteredLineItemsList) {
+					logger.debug("FILTERED LINE ITEM ID= "+filteredItem.getId());
+				}
+				
+				
 				// compare list of line items with agg qual clause
 				if(aggQualList.size() > 0 && filteredLineItemsList.size()>0) {
 					int flag=0;
@@ -407,6 +578,8 @@ public class CalculateCompAmountSimpleInd {
 						qualifiedRuleListOfEmp.add(rule);
 						added=true;
 						listRules.add(rule);
+					}else {
+						logger.debug("Not adding "+rule.getRuleName()+"to the list");
 					}
 					
 				}else {
@@ -415,7 +588,7 @@ public class CalculateCompAmountSimpleInd {
 						qualifiedRuleListOfEmp.add(rule);
 						added=true;
 						listRules.add(rule);
-						
+						logger.debug("Adding "+rule.getRuleName()+"to the list");
 						
 						for(OrderLineItems items : filteredLineItemsList) {
 							orderTotal += items.getSubtotal();
@@ -423,15 +596,18 @@ public class CalculateCompAmountSimpleInd {
 						}
 						logger.debug("ORDER TOTAL= "+orderTotal);
 						logger.debug("QUANTITY= "+quantity);
+					}else {
+						logger.debug("Not adding "+rule.getRuleName()+"to the list");
 					}
 				}
 				if(added=true) {
 					sum_ordTotal_Qty_list.add(orderTotal);
 					sum_ordTotal_Qty_list.add(quantity);
-					rule_ordTotal_qty.put(rule, sum_ordTotal_Qty_list);
+					sum_ordTotal_Qty_list_main.add(sum_ordTotal_Qty_list);
+					
 					
 				}
-				
+				rule_ordTotal_qty.put(rule, sum_ordTotal_Qty_list_main);
 			}		
 		
 		}	
