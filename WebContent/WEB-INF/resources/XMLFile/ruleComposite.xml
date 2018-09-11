@@ -6,8 +6,10 @@
 			monthly basis for sale of computer</Description>
 		<CompensationType>Variable</CompensationType>
 		<CompensationValue>0</CompensationValue>
-		<CompensationFormula>Param 1 * .6 + Param 2 * .7 - Param 3</CompensationFormula>
-		<CompensationParameter>Param 1,Param 2,Param 3</CompensationParameter>
+		<!-- <CompensationFormula>Param 1 * .6 + Param 2 * .7 - Param 3</CompensationFormula>
+		<CompensationParameter>Param 1,Param 2,Param 3</CompensationParameter> -->
+		<CompensationFormula>$1 * 0.6 + $2 * 0.7 - $3</CompensationFormula>
+		<CompensationParameter>$Param_1,$Param_2,$Param_3</CompensationParameter>
 	 	<!--<RuleParameters>
 			<RuleParameter ParameterName="Param 1">
 				<ParameterValue>600</ParameterValue>

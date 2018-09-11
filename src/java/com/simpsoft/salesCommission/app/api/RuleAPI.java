@@ -168,7 +168,8 @@ public class RuleAPI {
 				newRule.setRuleSimple(simp);
 
 			}
-
+			/*logger.debug("RULE CALC SIMP LIST = "+ rule.getCalcSimpleList().size());
+			newRule.setCalcSimpleList(rule.getCalcSimpleList());*/
 			session.merge(newRule);
 			tx.commit();
 		} catch (HibernateException e) {

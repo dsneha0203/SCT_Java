@@ -94,7 +94,9 @@ public class EmployeeAPI {
 		Transaction tx = null;
 		tx = session.beginTransaction();
 		logger.debug("GET THE EMPLOYEE DETAILS FROM DATABASE");
-		return (Employee) session.get(Employee.class, employeeID);
+		Employee emp= (Employee) session.get(Employee.class, employeeID);
+		session.close();
+		return emp;
 	}
 
 	/**
@@ -406,6 +408,8 @@ public class EmployeeAPI {
 			employee1.setId(employee.getId());
 			employee1.setEmployeeName(employee.getEmployeeName());
 			employee1.setTarget(employee.getTarget());
+			/*logger.debug("EMP CALC SIMP LIST SIZE = "+employee.getCalcSimpleList().size());
+			employee1.setCalcSimpleList(employee.getCalcSimpleList());*/
 			session.merge(employee1);
 			logger.debug("EDIT THE EMPLOYEE DETAILS FROM DATABASE" + employee1);
 			tx.commit();

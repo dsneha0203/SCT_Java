@@ -87,9 +87,16 @@ $(document)
 		});
 	});
 </script>
-
+<style >
+.wrapper{ 
+	overflow-y:auto; 
+    position:relative; 
+    height: 500px;
+    padding-top: 30px;
+}
+</style>
 		</head>
-		<div style="height: 580px; overflow: auto;">
+		<div class="wrapper" >
 		<div id="example">
 
 			<table id="grid">
@@ -157,7 +164,7 @@ $(document)
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
            <input type="submit" value="Upload" onClick="alert('Uploading Files.....!!!!!')" />
-            <input id="addFile" type="button" value="Add More Files" />
+            <!-- <input id="addFile" type="button" value="Add More Files" />  -->
         </form:form>
         
 

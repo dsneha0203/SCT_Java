@@ -27,6 +27,7 @@ import com.simpsoft.salesCommission.app.api.RuleAPI;
 import com.simpsoft.salesCommission.app.api.RuleAssignmentAPI;
 import com.simpsoft.salesCommission.app.api.RuleSimpleAPI;
 import com.simpsoft.salesCommission.app.api.SplitRuleAPI;
+import com.simpsoft.salesCommission.app.model.CalculationSimple;
 import com.simpsoft.salesCommission.app.model.Employee;
 import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.OrderDetail;
@@ -56,6 +57,9 @@ public class CalculateCompAmountSimpleInd {
 	private static Map<Rule,Map<Date,Date>> rule_freq_map = null;
 	private static int index;
 	private static HashMap<Rule, List<Double>> rule_output_map = null;
+	private static List<CalculationSimple> calcSimpList = new ArrayList<>();
+	private static List<CalculationSimple> calcSimpListRule = null;
+	
 	
 	public static void main(String[] args) throws ParseException, ScriptException {
 		
@@ -82,12 +86,13 @@ public class CalculateCompAmountSimpleInd {
 		logger.debug("eDATE= "+sDate2);
 		 endDate=new SimpleDateFormat("dd/MM/yyyy").parse(sDate2);
 		logger.debug("END DATE= "+endDate);
-		calcAPI.saveDates(startDate, endDate);
+		
 		
 		
 		//find rule assignments for all employee
 		findRuleAssgForAllEmp(calcAPI, empAPI, ruleAssAPI, ruleAPI, orderAPI, splitRuleAPI);
-	
+		
+		calcAPI.saveDatesSimpList(startDate, endDate, calcSimpList);
 	}
 
 	/**
@@ -103,6 +108,8 @@ public class CalculateCompAmountSimpleInd {
 		logger.debug("---FINDING RULE ASSIGNMENTS---");
 		List<Employee> empList = empAPI.listEmployees();
 		for(Employee emp: empList) {
+			
+			List<CalculationSimple> calcSimpleListEmp = new ArrayList<>();
 			int counter=0;
 			 assignment= ruleAssAPI.searchAssignedRuleForEmployee(emp.getId());
 			
@@ -187,6 +194,17 @@ public class CalculateCompAmountSimpleInd {
 							}else {
 								logger.debug("FIXED RULE");
 //								numTimes.put(details.getId(), (long) 1);
+								Date planStartDate = details.getStartDate();
+								SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+								String sd = format1.format(planStartDate);
+								planStartDate = format1.parse(sd);
+								logger.debug("Fixed rule Plan start date= "+planStartDate);
+								Date planEndDate = details.getEndDate();
+								String ed = format1.format(planEndDate);
+								planEndDate = format1.parse(ed);
+								logger.debug("Fixed rule Plan end date= "+planEndDate);
+								freqDates =calcAPI.getDatesFixedRule(planStartDate, planEndDate, startDate, endDate);
+								rule_freq_map.put(details.getRule(), freqDates);
 							}
 							
 							
@@ -293,12 +311,48 @@ public class CalculateCompAmountSimpleInd {
 					String prevRule = "";
 					for(Rule satisfiedRule : qualifiedRuleListOfEmp) {
 						
+						List<CalculationSimple> calcSimpListRule = new ArrayList<>();
+						
 						ArrayList<Double> paramValues = new ArrayList<>();
 						logger.debug("SATISFIED SIMPLE RULE NAME= "+satisfiedRule.getRuleName());
 						
 						if(satisfiedRule.getCompensationType().equals("Fixed")) {
 							logger.debug("fixed value= "+ satisfiedRule.getFixedCompValue());
 							logger.debug("COMPENSATION AMOUNT= "+satisfiedRule.getFixedCompValue());
+							for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
+								Rule rule = rule_dates_map.getKey();
+								if(rule== satisfiedRule) {
+									Date ruleCalcStartDate = new Date();
+									Date ruleCalcEndDate = new Date();
+									Map<Date, Date> fixedDates = rule_dates_map.getValue();
+									for(Map.Entry<Date, Date> dateMap : fixedDates.entrySet()) {
+										ruleCalcStartDate = dateMap.getKey();
+										ruleCalcEndDate = dateMap.getValue();
+									}
+									
+									logger.debug("---DATA TO BE SAVED FOR FIXED RULE---");
+									logger.debug("EMP ID = "+emp.getId());
+									logger.debug("RULE ID= "+rule.getId());
+									logger.debug("CALC START DATE= "+ruleCalcStartDate);
+									logger.debug("CALC END DATE= "+ruleCalcEndDate);
+									logger.debug("COMP AMT= "+satisfiedRule.getFixedCompValue());
+									
+									CalculationSimple calculationSimple = new CalculationSimple();
+									calculationSimple.setCalStartDate(ruleCalcStartDate);
+									calculationSimple.setCalEndDate(ruleCalcEndDate);
+									calculationSimple.setCompensationAmount((double) satisfiedRule.getFixedCompValue());
+									calculationSimple.setDummyCalcInternal(false);
+									calculationSimple.setRule(satisfiedRule);
+									calculationSimple.setEmployee(emp);
+									
+									calcSimpList.add(calculationSimple);
+									break;
+								}
+							}
+							
+							
+							
+							
 						}else {
 							String formula = satisfiedRule.getCompensationFormula();
 							logger.debug("ORIGINAL FORMULA= "+formula);
@@ -388,10 +442,10 @@ public class CalculateCompAmountSimpleInd {
 								for(Map.Entry<Rule, List<Double>> entry : rule_output_map.entrySet()) {
 									Rule rule= entry.getKey();
 									if(rule == satisfiedRule) {
-											
+										int count_loop = 0;
 											List<Double> values = entry.getValue();
 											for(Double value : values) {
-												int count_loop = 0;
+												
 												
 												ArrayList<Double> newParamValues = new ArrayList<>();
 												newParamValues.addAll(paramValues);
@@ -410,20 +464,15 @@ public class CalculateCompAmountSimpleInd {
 												 for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
 													Rule keyRule = rule_dates_map.getKey();
 													if(keyRule == rule) {
-														
+														CalculationSimple calculationSimple = new CalculationSimple();
 														Date ruleCalcStartDate=new Date();
 														Date ruleCalcEndDate=new Date();
 														Map<Date,Date> dates = rule_dates_map.getValue();
-														outer: for(Map.Entry<Date, Date> entry2 : dates.entrySet()) {
+														Object startDate_key = dates.keySet().toArray()[count_loop];
+														Object endDate_val = dates.get(startDate_key);
 															
-															if(count_loop !=0) {
-																for(int i=1; i<= count_loop; i++) {
-																	continue outer;
-																}
-															}
-															
-															ruleCalcStartDate = entry2.getKey();
-															ruleCalcEndDate = entry2.getValue();
+															ruleCalcStartDate = (Date) startDate_key;
+															ruleCalcEndDate = (Date) endDate_val;
 															
 															
 															
@@ -434,11 +483,17 @@ public class CalculateCompAmountSimpleInd {
 															logger.debug("CALC END DATE= "+ruleCalcEndDate);
 															logger.debug("COMP AMT= "+compAmt);
 															
+															calculationSimple.setCalStartDate(ruleCalcStartDate);
+															calculationSimple.setCalEndDate(ruleCalcEndDate);
+															calculationSimple.setCompensationAmount((double) compAmt);
+															calculationSimple.setDummyCalcInternal(false);
+															calculationSimple.setRule(satisfiedRule);
+															calculationSimple.setEmployee(emp);
+															
+															calcSimpList.add(calculationSimple);
 															
 															count_loop+=1;
-															break;
-															
-														}
+														
 													}
 													
 												}
@@ -455,7 +510,9 @@ public class CalculateCompAmountSimpleInd {
 							
 							
 							
-						}
+						}		
+			
+
 					}
 				}else {
 					logger.debug("NO SIMPLE RULES ARE SATISFIED FOR EMP ID= "+emp.getId());
@@ -466,6 +523,7 @@ public class CalculateCompAmountSimpleInd {
 			qualifiedRuleListOfEmp=null;
 			rule_ruleassg = null;
 			empAssg_rule_ordTotal_qty=null;
+			
 		}
 		
 	}

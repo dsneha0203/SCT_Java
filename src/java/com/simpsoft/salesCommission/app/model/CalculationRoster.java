@@ -29,12 +29,12 @@ public class CalculationRoster {
 	@Column(name = "endDate")
 	private Date endDate;
 	
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CALC_ROSTER_ID")
 	@IndexColumn(name = "detailSrl")
 	private List<CalculationSimple> calcSimpleList;
 	
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CALC_ROSTER_ID")
 	@IndexColumn(name = "detailSrl")
 	private List<CalculationComposite> calcCompositeList;

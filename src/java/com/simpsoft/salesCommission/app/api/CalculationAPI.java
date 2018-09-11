@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.simpsoft.salesCommission.app.model.CalculationRoster;
+import com.simpsoft.salesCommission.app.model.CalculationSimple;
 import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.OrderDetail;
 import com.simpsoft.salesCommission.app.model.OrderLineItems;
@@ -48,6 +49,38 @@ public class CalculationAPI {
 
 	public void setSessionFactory(SessionFactory factory) {
 		sessionFactory = factory;
+	}
+	
+	public Map<Date,Date> getDatesFixedRule(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate){
+		Date startDate;
+		Date endDate;
+		Map<Date,Date> fixedRuleDatesMap = new HashMap<>();
+		
+		if(planStartDate.equals(rosterStartDate)) {
+			startDate=rosterStartDate; // or startDate = planStartDate
+		}else {
+			if(planStartDate.after(rosterStartDate)) {
+				startDate= planStartDate;
+			}else {
+				startDate = rosterStartDate;
+			}
+		}
+		if(planEndDate.equals(rosterEndDate)) {
+			endDate= rosterEndDate; // or endDate=planEndDate
+		}else {
+			if(planEndDate.before(rosterEndDate)) {
+				endDate= planEndDate;
+			}else {
+				endDate = rosterEndDate;
+			}
+		}
+		
+		logger.debug("fixed rule start date to calculate from= "+startDate);
+		logger.debug("fixed rule end date to calculate till= "+endDate);
+		
+		fixedRuleDatesMap.put(startDate,endDate);
+		return fixedRuleDatesMap;
+		
 	}
 
 	public Map<Date,Date> getFullWeeks(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
@@ -727,6 +760,7 @@ public class CalculationAPI {
 	}
 	
 	
+	
 	public boolean checkValidity(RuleAssignmentAPI ruleAssAPI, long ruleAssDetailId, Date startDate2, Date endDate2) throws ParseException {
 		RuleAssignmentDetails assignmentDetails = ruleAssAPI.getRuleAssignmentDetail(ruleAssDetailId);
 		String validityType = assignmentDetails.getValidityType();
@@ -793,16 +827,39 @@ public class CalculationAPI {
 	}
 	
 	
-	public void saveDates(Date startdate, Date enddate) {
+	public void saveDatesSimpList(Date startdate, Date enddate, List<CalculationSimple> calcSimpList) {
 		logger.debug("---IN SAVE DATE METHOD---");
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		CalculationRoster calculationRoster = new CalculationRoster();
+		List<CalculationSimple> calSimp = new ArrayList<CalculationSimple>();
 		try {
 			tx = session.beginTransaction();
+			logger.debug("ROSTER START DATE= "+startdate);
 			calculationRoster.setStartDate(startdate);
+			logger.debug("ROSTER END DATE= "+enddate);
 			calculationRoster.setEndDate(enddate);
-			session.save(calculationRoster);
+			logger.debug("ROSTER CALC SIMP LIST");
+			for(CalculationSimple calculationSimple : calcSimpList) {
+				logger.debug("ROSTER CALC START DATE= "+calculationSimple.getCalStartDate());
+				logger.debug("ROSTER CALC END DATE= "+calculationSimple.getCalEndDate());
+				logger.debug("ROSTER COMP AMT= "+calculationSimple.getCompensationAmount());
+				logger.debug("ROSTER EMP ID= "+calculationSimple.getEmployee().getId());
+				logger.debug("ROSTER RULE ID= "+calculationSimple.getRule().getId());
+				CalculationSimple simple = new CalculationSimple();
+				simple.setCalStartDate(calculationSimple.getCalStartDate());
+				simple.setCalEndDate(calculationSimple.getCalEndDate());
+				simple.setCompensationAmount(calculationSimple.getCompensationAmount());
+				simple.setEmployee(calculationSimple.getEmployee());
+				simple.setRule(calculationSimple.getRule());
+				simple.setDummyCalcInternal(false);
+				calSimp.add(simple);
+				
+				
+			}
+			calculationRoster.setCalcSimpleList(calSimp);
+			
+			session.merge(calculationRoster);
 			tx.commit();
 			logger.debug("---SAVED---");
 		}catch(HibernateException e) {

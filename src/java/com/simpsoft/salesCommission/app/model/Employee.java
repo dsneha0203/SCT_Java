@@ -42,10 +42,10 @@ public class Employee {
 	@IndexColumn(name = "detailSrl")
 	private List<Target> target;
 	
-	@OneToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
+	/*@OneToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
 	@JoinColumn(name = "EMP_ID")
-	@IndexColumn(name = "detailSrl")
-	private List<CalculationSimple> calcSimpleList;
+	
+	private List<CalculationSimple> calcSimpleList;*/
 	
 	@OneToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
 	@JoinColumn(name = "EMP_ID")
@@ -176,13 +176,13 @@ public class Employee {
 	
 
 	
-	public List<CalculationSimple> getCalcSimpleList() {
+	/*public List<CalculationSimple> getCalcSimpleList() {
 		return calcSimpleList;
 	}
 
 	public void setCalcSimpleList(List<CalculationSimple> calcSimpleList) {
 		this.calcSimpleList = calcSimpleList;
-	}
+	}*/
 
 	
 	public List<CalculationComposite> getCalcCompositeList() {

@@ -59,6 +59,12 @@ public class Rule {
 	@Column(name = "compensationParameter")
 	private String compensationParameter;
 	
+	/*@OneToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
+	@JoinColumn(name = "RULE_ID")
+	
+	private List<CalculationSimple> calcSimpleList;*/
+	
+	
 	public Rule() {
 	}
 
@@ -276,5 +282,17 @@ public class Rule {
 	                                  + description + ", "  
 	    	                                  + ruleType + ">";
 	    }
+	
+	
+	/*public List<CalculationSimple> getCalcSimpleList() {
+		return calcSimpleList;
+	}
+
+
+	public void setCalcSimpleList(List<CalculationSimple> calcSimpleList) {
+		this.calcSimpleList = calcSimpleList;
+	}*/
+
+
 
 }

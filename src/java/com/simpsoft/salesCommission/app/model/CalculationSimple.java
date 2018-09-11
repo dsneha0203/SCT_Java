@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.IndexColumn;
@@ -31,7 +32,7 @@ public class CalculationSimple {
 	private Date calEndDate;
 	
 	@Column(name = "compensationAmount")
-	private  int compensationAmount;
+	private  double compensationAmount;
 	
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "dummyCalcInternal", nullable = false)
@@ -43,6 +44,14 @@ public class CalculationSimple {
 	
 	@Column(name = "ruleOutput")
 	private  String ruleOutput;
+	
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "RULE_ID")
+	private Rule rule;
+	
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "EMP_ID")
+	private Employee employee;
 	
 	@OneToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
 	@JoinColumn(name = "CALC_SIMPLE_ID")
@@ -102,14 +111,14 @@ public class CalculationSimple {
 	/**
 	 * @return the compensationAmount
 	 */
-	public int getCompensationAmount() {
+	public double getCompensationAmount() {
 		return compensationAmount;
 	}
 
 	/**
 	 * @param compensationAmount the compensationAmount to set
 	 */
-	public void setCompensationAmount(int compensationAmount) {
+	public void setCompensationAmount(double compensationAmount) {
 		this.compensationAmount = compensationAmount;
 	}
 
@@ -171,5 +180,33 @@ public class CalculationSimple {
 		this.calcDetailsOrderLineItemsList = calcDetailsOrderLineItemsList;
 	}
 	
+	/**
+	 * @return the rule
+	 */
+	public Rule getRule() {
+		return rule;
+	}
+
+	/**
+	 * @param rule the rule to set
+	 */
+	public void setRule(Rule rule) {
+		this.rule = rule;
+	}
 	
+	
+	/**
+	 * @return the employee
+	 */
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	/**
+	 * @param employee
+	 *            the employee to set
+	 */
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 }
