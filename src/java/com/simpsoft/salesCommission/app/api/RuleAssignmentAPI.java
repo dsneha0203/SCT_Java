@@ -230,6 +230,7 @@ public class RuleAssignmentAPI {
 			
 			
 			List<RuleAssignmentDetails>  ruleAssDtl = ruleAss.getRuleAssignmentDetails();
+			
 			logger.debug("----RULE ASSIGNMENT DETAILS NOW ADDED----");
 			for(Iterator itr=ruleAssDtl.iterator(); itr.hasNext(); ) {
 				RuleAssignmentDetails assignmentDetails = (RuleAssignmentDetails)itr.next();
@@ -253,7 +254,28 @@ public class RuleAssignmentAPI {
 				}
 			}
 
-			newRuleAss.addRuleAssignmentDetails(ruleAssDtl);
+//			newRuleAss.addRuleAssignmentDetails(ruleAssDtl);
+			
+			List<RuleAssignmentDetails>  newRuleAssignmentDetailsList = new ArrayList<RuleAssignmentDetails>();
+			for (Iterator iterator = ruleAssDtl.iterator(); iterator.hasNext();) {
+
+				RuleAssignmentDetails ruleAssignmentDetails = (RuleAssignmentDetails) iterator.next();
+				RuleAssignmentDetails newRuleAssignmentDetails = new RuleAssignmentDetails();
+				newRuleAssignmentDetails.setValidityType(ruleAssignmentDetails.getValidityType());
+				newRuleAssignmentDetails.setFrequency(ruleAssignmentDetails.getFrequency());
+				newRuleAssignmentDetails.setStartDate(ruleAssignmentDetails.getStartDate());
+				newRuleAssignmentDetails.setEndDate(ruleAssignmentDetails.getEndDate());
+				if(ruleAssignmentDetails.getRuleAssignmentParameter() != null) {
+					newRuleAssignmentDetails.setRuleAssignmentParameter(ruleAssignmentDetails.getRuleAssignmentParameter());
+				}else {
+					newRuleAssignmentDetails.setRuleAssignmentParameter(null);
+				}
+				
+				newRuleAssignmentDetails.setRule(ruleAssignmentDetails.getRule());
+				newRuleAssignmentDetailsList.add(newRuleAssignmentDetails);
+			}
+		
+			newRuleAss.setRuleAssignmentDetails(newRuleAssignmentDetailsList);
 
 			session.merge(newRuleAss);
 			
@@ -272,56 +294,56 @@ public class RuleAssignmentAPI {
 		
 	}
 	
-	public void editRuleAssignment(RuleAssignment ruleAss, long ruleAssId) {
-		
-		Session session = sessionFactory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			RuleAssignment newRuleAss = (RuleAssignment) session.get(RuleAssignment.class, ruleAssId);
-
-			Employee emp = ruleAss.getEmployee();
-			if(emp!=null)
-			{
-				logger.debug("EMP IN EDIT METHOD= "+ruleAss.getEmployee().getEmployeeName());
-				newRuleAss.setEmployee(ruleAss.getEmployee());
-			}
-			else
-			{
-				logger.debug("ROLE IN EDIT METHOD= "+ruleAss.getRole().getRoleName());
-				newRuleAss.setRole(ruleAss.getRole());
-				
-			}
-			
-			List<RuleAssignmentDetails>  newRuleAssignmentDetailsList = new ArrayList<RuleAssignmentDetails>();
-			List<RuleAssignmentDetails>  ruleAssDtl = ruleAss.getRuleAssignmentDetails();
-			for (Iterator iterator = ruleAssDtl.iterator(); iterator.hasNext();) {
-
-				RuleAssignmentDetails ruleAssignmentDetails = (RuleAssignmentDetails) iterator.next();
-				RuleAssignmentDetails newRuleAssignmentDetails = new RuleAssignmentDetails();
-				newRuleAssignmentDetails.setValidityType(ruleAssignmentDetails.getValidityType());
-				newRuleAssignmentDetails.setFrequency(ruleAssignmentDetails.getFrequency());
-				newRuleAssignmentDetails.setStartDate(ruleAssignmentDetails.getStartDate());
-				newRuleAssignmentDetails.setEndDate(ruleAssignmentDetails.getEndDate());
-				newRuleAssignmentDetails.setRuleAssignmentParameter(ruleAssignmentDetails.getRuleAssignmentParameter());
-				newRuleAssignmentDetails.setRule(ruleAssignmentDetails.getRule());
-				newRuleAssignmentDetailsList.add(newRuleAssignmentDetails);
-			}
-			//editRuleAssignmentDetails(session,newRuleAssignmentDetailsList);
-			
-			session.merge(newRuleAss);
-			
-			tx.commit();
-			//logger.debug("EDITED AN RULE ASSIGNMENT INTO DATABASE" + newRuleAss);
-		} catch (HibernateException e) {
-			if (tx != null)
-				tx.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-		
-	}
+//	public void editRuleAssignment(RuleAssignment ruleAss, long ruleAssId) {
+//		
+//		Session session = sessionFactory.openSession();
+//		Transaction tx = null;
+//		try {
+//			tx = session.beginTransaction();
+//			RuleAssignment newRuleAss = (RuleAssignment) session.get(RuleAssignment.class, ruleAssId);
+//
+//			Employee emp = ruleAss.getEmployee();
+//			if(emp!=null)
+//			{
+//				logger.debug("EMP IN EDIT METHOD= "+ruleAss.getEmployee().getEmployeeName());
+//				newRuleAss.setEmployee(ruleAss.getEmployee());
+//			}
+//			else
+//			{
+//				logger.debug("ROLE IN EDIT METHOD= "+ruleAss.getRole().getRoleName());
+//				newRuleAss.setRole(ruleAss.getRole());
+//				
+//			}
+//			
+//			List<RuleAssignmentDetails>  newRuleAssignmentDetailsList = new ArrayList<RuleAssignmentDetails>();
+//			List<RuleAssignmentDetails>  ruleAssDtl = ruleAss.getRuleAssignmentDetails();
+//			for (Iterator iterator = ruleAssDtl.iterator(); iterator.hasNext();) {
+//
+//				RuleAssignmentDetails ruleAssignmentDetails = (RuleAssignmentDetails) iterator.next();
+//				RuleAssignmentDetails newRuleAssignmentDetails = new RuleAssignmentDetails();
+//				newRuleAssignmentDetails.setValidityType(ruleAssignmentDetails.getValidityType());
+//				newRuleAssignmentDetails.setFrequency(ruleAssignmentDetails.getFrequency());
+//				newRuleAssignmentDetails.setStartDate(ruleAssignmentDetails.getStartDate());
+//				newRuleAssignmentDetails.setEndDate(ruleAssignmentDetails.getEndDate());
+//				newRuleAssignmentDetails.setRuleAssignmentParameter(ruleAssignmentDetails.getRuleAssignmentParameter());
+//				newRuleAssignmentDetails.setRule(ruleAssignmentDetails.getRule());
+//				newRuleAssignmentDetailsList.add(newRuleAssignmentDetails);
+//			}
+//			//editRuleAssignmentDetails(session,newRuleAssignmentDetailsList);
+//			
+//			session.merge(newRuleAss);
+//			
+//			tx.commit();
+//			//logger.debug("EDITED AN RULE ASSIGNMENT INTO DATABASE" + newRuleAss);
+//		} catch (HibernateException e) {
+//			if (tx != null)
+//				tx.rollback();
+//			e.printStackTrace();
+//		} finally {
+//			session.close();
+//		}
+//		
+//	}
 	
 	public List<RuleAssignmentDetails> editRuleAssignmentDetails(Session session,List<RuleAssignmentDetails> ruleAssDtl) {
 		

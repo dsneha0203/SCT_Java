@@ -1,6 +1,8 @@
 package com.simpsoft.salesCommission.ui;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -87,7 +89,7 @@ public class TestCompController {
 		/*---------------------------Finding compensation assignment for role------------------------------*/
 		
 		
-RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
+		RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 		
 		if (object != null) {
 			logger.debug("ROLE UI SESSION ATTRIBUTE= "+object.getRoleName());
@@ -238,9 +240,9 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 		
 		
 		model.addAttribute("id", assnmnt.getId());
-		logger.debug("chkId: " + assnmnt.getId());
+//		logger.debug("chkId: " + assnmnt.getId());
 		model.addAttribute("assRoleName", assnmnt.getName());
-		logger.debug("Assignee name: " + assnmnt.getName());
+		logger.debug("Assignee Role name: " + assnmnt.getName());
 		model.addAttribute("assid", assnmnt.getAssid());
 		logger.debug("chkId: " + assnmnt.getAssid());
 		model.addAttribute("assempName", assnmnt.getEmpName());
@@ -264,12 +266,31 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 				logger.debug("Frequency:  " + rul1.getFrequency());
 				assUI.setFrequency(rul1.getFrequency());
 				logger.debug("StartDate:  " + rul1.getStartdate());
-				assUI.setStartdate(rul1.getStartdate());
+				
 				logger.debug("EndDate:  " + rul1.getEndDate());
+				
+				if(rul1.getEndDate().before(rul1.getStartdate())) {
+					JOptionPane.showMessageDialog(null, 
+				            "The end date cannot be earlier than the start date", 
+				            "Cannot add target", 
+				            JOptionPane.WARNING_MESSAGE);
+					return "redirect:/compplan";
+				}
+				
+				assUI.setStartdate(rul1.getStartdate());
 				assUI.setEndDate(rul1.getEndDate());
 				List<RuleAssignmentParameter> assignmentParameters = new ArrayList<>();
+				Rule rule = ruleApi.getRule(rul1.getId());
+				if(rule.getRuleType().equalsIgnoreCase("composite")) {
+					RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
+					assignmentParameter = null;
+					assignmentParameters.add(assignmentParameter);
+					
+					
+				}else {
+
 					if(rul1.getRuleAssignmentParameter() != null) {						
-						if(counter==0) {
+//						if(counter==0) {
 							for (RuleAssignmentParameter rul2 : rul1.getRuleAssignmentParameter()) {
 								RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
 								logger.debug("ParameterName: " + rul2.getParameterName());
@@ -282,40 +303,52 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 								}
 								assignmentParameters.add(assignmentParameter);
 							}
-						}else {
-							
-							RuleAssUI rul = (RuleAssUI) itr.next();
-							for (RuleAssignmentParameter rul2 : rul.getRuleAssignmentParameter()) {
-								RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
-								logger.debug("ParameterName: " + rul2.getParameterName());
-								assignmentParameter.setParameterName(rul2.getParameterName());
-								logger.debug("OverwriteValue: " + rul2.getOverwriteValue());
-								assignmentParameter.setOverwriteValue(rul2.getOverwriteValue());
-								if(rul2.getTargetDefinition() != null) {
-									logger.debug("TargetDefinition: " + rul2.getTargetDefinition().getDisplayName());
-									assignmentParameter.setTargetDefinition(rul2.getTargetDefinition());
-								}
-								assignmentParameters.add(assignmentParameter);
-							}
-						}
+//						}else {
+//							
+//							RuleAssUI rul = (RuleAssUI) itr.next();
+//							if(rul.getRuleAssignmentParameter() != null) {
+//								for (RuleAssignmentParameter rul2 : rul.getRuleAssignmentParameter()) {
+//									RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
+//									logger.debug("ParameterName: " + rul2.getParameterName());
+//									assignmentParameter.setParameterName(rul2.getParameterName());
+//									logger.debug("OverwriteValue: " + rul2.getOverwriteValue());
+//									assignmentParameter.setOverwriteValue(rul2.getOverwriteValue());
+//									if(rul2.getTargetDefinition() != null) {
+//										logger.debug("TargetDefinition: " + rul2.getTargetDefinition().getDisplayName());
+//										assignmentParameter.setTargetDefinition(rul2.getTargetDefinition());
+//									}
+//									assignmentParameters.add(assignmentParameter);
+//								}
+//							}
+//							
+//						}
 						
-					}else {
-						RuleAssUI rul2 = (RuleAssUI) itr.next();
-						for (RuleAssignmentParameter rul3 : rul2.getRuleAssignmentParameter()) {
-							RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
-							logger.debug("ParameterName: " + rul3.getParameterName());
-							assignmentParameter.setParameterName(rul3.getParameterName());
-							logger.debug("OverwriteValue: " + rul3.getOverwriteValue());
-							assignmentParameter.setOverwriteValue(rul3.getOverwriteValue());
-							if(rul3.getTargetDefinition() != null) {
-								logger.debug("TargetDefinition: " + rul3.getTargetDefinition().getDisplayName());
-								assignmentParameter.setTargetDefinition(rul3.getTargetDefinition());
-							}
-							assignmentParameters.add(assignmentParameter);
-						}
-						itr.previous();
-						counter++;
 					}
+//					else {
+//						RuleAssUI rul2 = (RuleAssUI) itr.next();
+//						if(rul2.getRuleAssignmentParameter() != null) {
+//							for (RuleAssignmentParameter rul3 : rul2.getRuleAssignmentParameter()) {
+//								RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
+//								logger.debug("ParameterName: " + rul3.getParameterName());
+//								assignmentParameter.setParameterName(rul3.getParameterName());
+//								logger.debug("OverwriteValue: " + rul3.getOverwriteValue());
+//								assignmentParameter.setOverwriteValue(rul3.getOverwriteValue());
+//								if(rul3.getTargetDefinition() != null) {
+//									logger.debug("TargetDefinition: " + rul3.getTargetDefinition().getDisplayName());
+//									assignmentParameter.setTargetDefinition(rul3.getTargetDefinition());
+//								}
+//								assignmentParameters.add(assignmentParameter);
+//							}
+//						}
+//						
+//						itr.previous();
+//						counter++;
+//					}
+					
+				}
+				
+					
+					
 					
 					assUI.setRuleAssignmentParameter(assignmentParameters);
 			}
@@ -335,13 +368,18 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 			logger.debug("Frequency:  " + assUI.getFrequency());
 			logger.debug("StartDate:  " + assUI.getStartdate());
 			logger.debug("EndDate:  " + assUI.getEndDate());
-			for (RuleAssignmentParameter rul2 : assUI.getRuleAssignmentParameter()) {
-				logger.debug("ParameterName: " + rul2.getParameterName());
-				logger.debug("OverwriteValue: " + rul2.getOverwriteValue());
-				if(rul2.getTargetDefinition() != null) {
-					logger.debug("TargetDefinition: " + rul2.getTargetDefinition().getDisplayName());
+			Rule rule= ruleApi.searchRuleByName(assUI.getRuleName());
+			if(!rule.getRuleType().equalsIgnoreCase("composite")) {
+			if(assUI.getRuleAssignmentParameter() != null) {
+				for (RuleAssignmentParameter rul2 : assUI.getRuleAssignmentParameter()) {
+					logger.debug("ParameterName: " + rul2.getParameterName());
+					logger.debug("OverwriteValue: " + rul2.getOverwriteValue());
+					if(rul2.getTargetDefinition() != null) {
+						logger.debug("TargetDefinition: " + rul2.getTargetDefinition().getDisplayName());
+					}
 				}
-			}			
+			}
+		}			
 			
 		}
 		
@@ -367,6 +405,7 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 			}
 			rass.setStartDate(rpm.getStartdate());
 			rass.setEndDate(rpm.getEndDate());
+			if(!rule.getRuleType().equalsIgnoreCase("composite")) {
 			if(rpm.getRuleAssignmentParameter() != null) {
 			List<RuleAssignmentParameter> rpm1 = rpm.getRuleAssignmentParameter();
 			List<RuleAssignmentParameter> ruleParamList = new ArrayList<>();
@@ -422,8 +461,11 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 			}else {
 				rass.setRuleAssignmentParameter(null);
 			}
-			
+			}else {
+				rass.setRuleAssignmentParameter(null);
+			}
 			rp.add(rass);
+			
 			}
 		}
 
@@ -520,6 +562,15 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 			logger.debug("END DATE ASSIGNED= "+rass.getEndDate());
 			
 			
+			if(rass.getEndDate().before(rass.getStartDate())) {
+				JOptionPane.showMessageDialog(null, 
+			            "The end date cannot be earlier than the start date", 
+			            "Cannot add target", 
+			            JOptionPane.WARNING_MESSAGE);
+				return "redirect:/compplan";
+			}
+			
+			
 			if(rpm.getRuleAssignmentParameter() != null) {
 			List<RuleAssignmentParameter> rpm1 = rpm.getRuleAssignmentParameter();
 			
@@ -589,6 +640,32 @@ RoleUI object = (RoleUI) request.getSession().getAttribute("roleNameCompAsg");
 				RuleAssignment ruleAssg = ruleAssApi.getPreviousRuleAssignmentForEmp(emp.getId());
 				List<RuleAssignmentDetails> rulesAssgDetailList = ruleAssg.getRuleAssignmentDetails();
 				rulesAssgDetailList.addAll(rp);
+				
+				logger.debug("-- FINAL ASSG DETAILS LIST---");
+				for(RuleAssignmentDetails assignmentDetails : rulesAssgDetailList) {
+					logger.debug("EMP ID = "+emp.getEmployeeName());
+					logger.debug("RULE ID = "+assignmentDetails.getRule().getId());
+					logger.debug("START DATE= "+assignmentDetails.getStartDate());
+					logger.debug("END DATE= "+assignmentDetails.getEndDate());
+					logger.debug("VALIDITY TYPE= "+assignmentDetails.getValidityType());
+					
+					if(assignmentDetails.getRuleAssignmentParameter() != null) {
+						logger.debug("PARAM LIST");
+						for(RuleAssignmentParameter assignmentParameter : assignmentDetails.getRuleAssignmentParameter()) {
+							logger.debug("PARAM NAME= "+ assignmentParameter.getParameterName());
+							logger.debug("VALUE TYPE= "+assignmentParameter.getValueType());
+							logger.debug("DEFAULT VALUE= "+assignmentParameter.getDefaultValue());
+							logger.debug("OVERWRITE VALUE= "+assignmentParameter.getOverwriteValue());
+							if(assignmentParameter.getTargetDefinition() != null) {
+								logger.debug("TARGET DEF NAME= "+assignmentParameter.getTargetDefinition().getDisplayName());
+							}
+							
+							
+						}
+						
+					}
+				}
+				
 				ruleAssApi.editRuleAssignment(ruleAssg);		
 				
 			}else {

@@ -56,6 +56,9 @@ overflow: -moz-scrollbars-vertical;
 overflow: auto;
 
 }
+.wrapper{
+	overflow-y : auto;
+}
 </style>
 
 <script>
@@ -330,7 +333,7 @@ overflow: auto;
 		</div>
 
 		<!-- ------------------------------------------This part is for displaying table against Employee/Role----------------------------------- -->
-		
+		<div class="wrapper">
 			
 				<form:form action="/CommissionTool/update" method="post"
 						id="ruleListForm"> 
@@ -528,7 +531,8 @@ overflow: auto;
             </tr></table>
           
             </form>
-			</div>		
+			</div>	
+			</div>	
 	
 	</tiles:putAttribute>
 </tiles:insertDefinition>

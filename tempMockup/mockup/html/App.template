@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html class=" js no-touch" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your page description here">
+    <meta name="author" content="">
+    <!-- css -->
+    <link href="../../../css/menu.css" rel="stylesheet">
+    <link href="../../../css/SalesCommission.css" rel="stylesheet">
+<script src="../../../js/jquery-2.1.4.min.js"></script>
+<script src="../../../js/custom.js"></script>
+<script src="../../../js/SalesCommission.js"></script>
+<script>
+$(window).load(function(){
+		execJS();
+	});
+	$(document).ready(function() {
+		});
+</script>
+<title>Sales Commissioning Tool</title>
+</head>
+<body>
+
+	<div style="background:#999; font-size:22px; text-align:center; line-height:50px; color:#FFF; font-weight:bold;">
+		Sales Commission Tool
+    </div>
+	<!-- start header -->
+	<header>
+		
+		<div id="headerMenu" class="container">
+				<div class="navbar navbar-static-top">
+					<div class="navigation">
+						<nav>
+						<ul class="nav topnav bold">
+							<li class="dropdown"><a href="#">Master data <i class="icon-angle-down"></i></a>
+							<ul class="dropdown-menu bold">
+								<li><a href="../../pages/employee/EmployeeListComponent.html">Employee</a></li>
+								<li><a href="../../pages/orgStructure/OrgStructure.html">Role</a></li>
+							    <li><a href="../../pages/compRule/CompRule.html">Comp Rule</a></li>
+								<li><a href="../../pages/rollup/RollupRule.html">Credit Split Rule</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+							<a href="#">Booking <i class="icon-angle-down"></i></a>
+							<ul style="display: none;" class="dropdown-menu bold">
+								<li><a href="../../pages/orders/OrderManagement.html">Orders/Booking</a></li>
+								
+			
+							</ul>
+							</li>
+							<li class="dropdown">
+							<a href="#">Compensation Plan <i class="icon-angle-down"></i></a>
+							<ul class="dropdown-menu bold">
+								<li><a href="../../pages/compPlan/CompPlan.html">Assign Compensation Plan</a></li>
+								
+							</ul>
+							</li>
+							<li class="dropdown">
+							<a href="#">Compensation <i class="icon-angle-down"></i></a>
+							<ul style="display: none;" class="dropdown-menu bold">
+								<li><a href="../../pages/compReport/CompReport.html">Employee Compensation Report</a></li>
+						
+							</ul>
+							</li>
+							
+						</ul>
+						</nav>
+					</div>
+					<!-- end navigation -->
+				</div>
+		</div>
+	</header>	
+	<!-- end header -->
+				
+
+<div id="menu"></div>
+	<div id="buffer" class="body"></div>
+	<div id="body" class="body" align="center">
+		@@FILECONTENT@@
+	</div>
+</body></html>

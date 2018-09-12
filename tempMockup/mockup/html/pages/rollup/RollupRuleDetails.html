@@ -1,0 +1,113 @@
+		<h1 align="center">Split Rule Details</h1>
+		<table border=1>
+			<tr>
+				<td>Rule name :</td>
+				<td><input type="text" size=50 value="Manager rollup"></input></td>
+			</tr>
+			<tr>
+				<td valign="top">Description :</td>
+				<td valign="top"><textarea rows="4" cols="50"
+						style="vertical-align: top">Split data for managers</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>Split Plan validity :
+				</td>
+				<td>
+					From <input type="text" value="10/11/2015"></input>
+							<script>
+								printChooseCal();
+							</script>
+					To <input type="text" value="11/12/2015" ></input>
+							<script>
+								printChooseCal();
+							</script>
+				</td>
+			</tr>
+			<tr>
+			<td valign="top">Applies when :</td>
+			<td>
+				<table>
+					<tr><td>Field</td><td>Condition</td><td>Value</td></tr>
+					<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<select>
+									<option value="volvo">Customer Name</option>
+									<option value="saab" selected="selected">Order Total</option>
+									<option value="mercedes">Discount %</option>
+								</select>
+						</td><td>
+								<input type="checkbox" value="Not">Not</input>
+								<select>
+									<option value="volvo">Equals</option>
+									<option value="mercedes">Greater Than</option>
+									<option value="mercedes">Less Than</option>
+									<option value="volvo">Like</option>
+								</select>
+						</td><td>
+								<input type="text" size="20"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td>And 
+								<select>
+									<option value="volvo">Customer Name</option>
+									<option value="saab">Order Total</option>
+									<option value="mercedes" selected="selected">Discount %</option>
+								</select>
+						</td><td>
+								<input type="checkbox" value="Not">Not</input>
+								<select>
+									<option value="volvo">Equals</option>
+									<option value="mercedes">Greater Than</option>
+									<option value="mercedes">Less Than</option>
+									<option value="volvo">Like</option>
+								</select>
+						</td><td>
+								<input type="text" size="20"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td></td><td></td><td><a href="#">Add</a></td></tr>
+				</table>
+				
+			</td>
+			</tr>
+			<tr>
+			<td valign="top"></td>
+			<td>
+				<table>
+					<tr><td>Beneficiary</td><td>Split Percentage</td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo">Admin</option>
+									<option value="saab" selected="selected">Sales Representative</option>
+									<option value="saab1">Supporting Engineer</option>
+									<option value="mercedes">Manager</option>
+									<option value="mercedes1">Second Level Manager</option>
+								</select>
+						</td><td>
+								<input type="text" size="5" value="70%"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td>
+								<select>
+									<option value="volvo">Admin</option>
+									<option value="saab">Sales Representative</option>
+									<option value="saab1">Supporting Engineer</option>
+									<option value="mercedes" selected="selected">Manager</option>
+									<option value="mercedes1">Second Level Manager</option>
+								</select>
+						</td><td>
+								<input type="text" size="5" value="30%"></input>
+							<a href="#">Delete</a></td></tr>
+					<tr><td></td><td><a href="#">Add</a></td></tr>
+				</table>
+				
+			</td>
+			</tr>
+				</table>
+			
+		<br><br>
+		<input type="button" value="Update"></input>
+	<script>
+		showCancel();
+	</script>
+	</div>
+	<script>
+		footer();
+	</script>
