@@ -1,0 +1,129 @@
+		<h1 align="center">Imported Orders</h1>
+		<table border=1 align="center">
+			<thead>
+				<tr>
+					<td><a href='#'>Order Id</a></td>
+					<td><a href='#'>Order Date</a></td>
+					<td><a href='#'>Sales Rep</a></td>
+					<td><a href='#'>Support Engineer</a></td>
+					<td><a href='#'>Admin</a></td>
+					<td><a href='#'>Customer</a></td>					
+					<td><a href='#'>Order Details</a></td>		
+					<td><a href='#'>Order total</a></td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody><tr>
+					<td><a href="#">O1234</a></td>
+					<td>10/11/2015</td>
+					<td>Matt Buddy</td>
+					<td>Will Morgan</td>
+					<td>John Smith</td>
+					<td>Intel Corporation</td>
+					<td>Router (R001) -2, Install & commissioning (S001) - 1</td>
+					<td>$5678.89</td>
+					<td>
+						<button type="button" class="btn btn-default"
+							onClick="toggle_visibility('foo');">
+							<img src="../../../image/icon.png" alt="Tutorials Point"
+								width="20" height="21" border="0" />
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td><a href="#">01794</a></td>
+					<td>05/01/2016</td>
+					<td>Ginda Basett</td>
+					<td></td>
+					<td></td>
+					<td>VMware</td>
+					<td>Router (R001) -2, Install & commissioning (S001) - 1</td>
+					<td>$4356.71</td>
+					<td>
+					<button type="button" class="btn btn-default"
+							onClick="toggle_visibility('foo1');">
+							<img src="../../../image/icon.png" alt="Tutorials Point"
+								width="20" height="21" border="0" />
+						</button>
+						</td>
+					</tr>
+					
+			</tbody>
+		</table>
+		<div id="foo" style="display: none">
+						<table border=1 align="center">
+			<thead>
+				<tr>
+					<td><a href='#'>Product ID</a></td>
+					<td><a href='#'>Quantity</a></td>
+					<td><a href='#'>Rate</a></td>
+					<td><a href='#'>Discount Percentage</a></td>
+					<td><a href='#'>Duty Percentage</a></td>	
+					<td><a href='#'>Sub Total</a></td>
+				</tr>
+			</thead>
+			<tbody><tr>
+					<td><a href="../../pages/rollup/RollupRuleDetails.html">O321</a></td>	
+					<td>45</td>
+					<td>$1234.34</td>        		
+					<td>5%</td>
+					<td>3.5%</td>
+					<td>$5678.89</td>
+					</tr>
+					<tr>
+					<td><a href="../../pages/rollup/RollupRuleDetails.html">6321</a></td>
+					<td>10</td>
+					<td>$500.00</td>            		
+					<td>7%</td>
+					<td>2%</td>
+					<td>$9876.5</td>
+					</tr>
+			</tbody>
+		</table>
+		</div>
+		<div id="foo1" style="display: none">
+						<table border=1 align="center">
+			<thead>
+				<tr>			
+					<td><a href='#'>Product ID</a></td>
+					<td><a href='#'>Quantity</a></td>
+					<td><a href='#'>Rate</a></td>
+					<td><a href='#'>Discount Percentage</a></td>
+					<td><a href='#'>Duty Percentage</a></td>	
+					<td><a href='#'>Sub Total</a></td>
+				</tr>
+			</thead>
+			<tbody><tr>
+					<td>1954</td>
+					<td>7</td>
+					<td>$6789.34</td>        		
+					<td>8%</td>
+					<td>5%</td>
+					<td>$1789.76</td>
+					</tr>
+					<tr>
+					<td>6321</td>
+					<td>16</td>
+					<td>$900.00</td>            		
+					<td>10%</td>
+					<td>2%</td>
+					<td>$946.7</td>
+					</tr>
+			</tbody>
+		</table>
+		</div>
+		<div id="tableFooter">
+		</div>
+			<script>
+				$("#tableFooter").load("components/tableFooter.html");
+				showCancel();
+			</script>
+			<script type="text/javascript">
+		function toggle_visibility(id) {
+			var e = document.getElementById(id);
+			if (e.style.display == 'block')
+				e.style.display = 'none';
+			else
+				e.style.display = 'block';
+		}
+	</script>

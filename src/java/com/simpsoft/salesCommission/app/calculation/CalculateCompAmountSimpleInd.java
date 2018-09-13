@@ -355,12 +355,13 @@ public class CalculateCompAmountSimpleInd {
 							
 						}else {
 							String formula = satisfiedRule.getCompensationFormula();
+							formula= formula.replaceAll(" ", "");
 							logger.debug("ORIGINAL FORMULA= "+formula);
 							String[] params = satisfiedRule.getCompensationParameter().split(",");
 							
 							logger.debug("PARAMS LIST ");
 							for(String param:params) {
-								
+								param = param.trim();
 							
 								logger.debug("PARAM NAME= "+param);
 								
@@ -399,7 +400,6 @@ public class CalculateCompAmountSimpleInd {
 																	rule_output = valueList.get(1);
 																}
 																logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
-//																paramValues.add(rule_output);
 																rule_output_list.add(rule_output);
 															}	
 															rule_output_map.put(rule, rule_output_list);
@@ -408,7 +408,15 @@ public class CalculateCompAmountSimpleInd {
 											}
 											
 									}
-									
+									else if(agg_func_name.equals("max")) {
+										
+									}
+									else if(agg_func_name.equals("min")) {
+										
+									}
+									else {
+										// for count
+									}
 								}else {
 									if(rule_ruleassg != null && !rule_ruleassg.isEmpty()) {
 										for(Map.Entry<Long, List<Rule>> entry : rule_ruleassg.entrySet()) {
@@ -518,12 +526,7 @@ public class CalculateCompAmountSimpleInd {
 									prevRule= satisfiedRule.getRuleName();
 								}
 							}
-							
-							
-							
-							
-							
-							
+						
 						}		
 			
 
@@ -642,6 +645,95 @@ public class CalculateCompAmountSimpleInd {
 								flag+=1;
 							}
 						}
+						
+						else if(aggClause.getAggregateFunctions().getFunctionName().equals("max")) {
+							int maxDiscPercentage=0;
+							int maxDutyPercentage=0;
+							int maxQty = 0;
+							for(OrderLineItems items : filteredLineItemsList) {
+								int discPercentage = items.getDiscountPercentage();
+								int dutyPercentage = items.getDutyPercentage();
+								int itemQty = items.getQuantity();
+								if(discPercentage >= maxDiscPercentage) {
+									maxDiscPercentage = discPercentage;
+								}
+								if(dutyPercentage >= maxDutyPercentage) {
+									maxDutyPercentage = dutyPercentage;
+								}
+								if(itemQty >= maxQty) {
+									maxQty = itemQty;
+								}
+							}
+							
+							int compareValue = 0;
+							String displayName = aggClause.getFieldList().getDisplayName();
+							boolean notFlag = aggClause.isNotFlag();
+							String condition = aggClause.getConditionList().getConditionValue();
+							String sValue = aggClause.getValue();
+							int value= Integer.parseInt(sValue);
+							if(displayName.equalsIgnoreCase("Discount Percentage")) {
+								compareValue= maxDiscPercentage;								
+							}
+							else if(displayName.equalsIgnoreCase("Duty Percentage")) {
+								compareValue= maxDutyPercentage;
+							}
+							else if(displayName.equalsIgnoreCase("Quantity")) {
+								compareValue = maxQty;
+							}
+							
+							boolean isSatisfied = checkAggQual(compareValue, notFlag, condition, (double) value);
+							logger.debug("isSatisfied for Agg Qual clause= "+isSatisfied);
+							if(isSatisfied == false) {
+								flag+=1;
+							}
+							
+						}
+						
+						else if(aggClause.getAggregateFunctions().getFunctionName().equals("min")) {
+							int minDiscPercentage=0;
+							int minDutyPercentage=0;
+							int minQty = 0;
+							for(OrderLineItems items : filteredLineItemsList) {
+								int discPercentage = items.getDiscountPercentage();
+								int dutyPercentage = items.getDutyPercentage();
+								int itemQty = items.getQuantity();
+								if(discPercentage <= minDiscPercentage) {
+									minDiscPercentage = discPercentage;
+								}
+								if(dutyPercentage <= minDutyPercentage) {
+									minDutyPercentage = dutyPercentage;
+								}
+								if(itemQty <= minQty) {
+									minQty = itemQty;
+								}
+							}
+							
+							int compareValue = 0;
+							String displayName = aggClause.getFieldList().getDisplayName();
+							boolean notFlag = aggClause.isNotFlag();
+							String condition = aggClause.getConditionList().getConditionValue();
+							String sValue = aggClause.getValue();
+							int value= Integer.parseInt(sValue);
+							if(displayName.equalsIgnoreCase("Discount Percentage")) {
+								compareValue= minDiscPercentage;								
+							}
+							else if(displayName.equalsIgnoreCase("Duty Percentage")) {
+								compareValue= minDutyPercentage;
+							}
+							else if(displayName.equalsIgnoreCase("Quantity")) {
+								compareValue = minQty;
+							}
+							
+							boolean isSatisfied = checkAggQual(compareValue, notFlag, condition, (double) value);
+							logger.debug("isSatisfied for Agg Qual clause= "+isSatisfied);
+							if(isSatisfied == false) {
+								flag+=1;
+							}
+						}
+						
+						else {
+							//for count
+						}
 					}
 					
 					//rule is qualified if flag value is 0
@@ -662,12 +754,49 @@ public class CalculateCompAmountSimpleInd {
 						listRules.add(rule);
 						logger.debug("Adding "+rule.getRuleName()+"to the list");
 						
+						int maxDiscPercentage=0;
+						int maxDutyPercentage=0;
+						int maxQty = 0;
+						int minDiscPercentage=0;
+						int minDutyPercentage=0;
+						int minQty = 0;
+						
 						for(OrderLineItems items : filteredLineItemsList) {
 							orderTotal += items.getSubtotal();
 							quantity += items.getQuantity();
+							
+							int discPercentage = items.getDiscountPercentage();
+							int dutyPercentage = items.getDutyPercentage();
+							int itemQty = items.getQuantity();
+							if(discPercentage >= maxDiscPercentage) {
+								maxDiscPercentage = discPercentage;
+							}
+							if(dutyPercentage >= maxDutyPercentage) {
+								maxDutyPercentage = dutyPercentage;
+							}
+							if(itemQty >= maxQty) {
+								maxQty = itemQty;
+							}
+							
+							
+							if(discPercentage <= minDiscPercentage) {
+								minDiscPercentage = discPercentage;
+							}
+							if(dutyPercentage <= minDutyPercentage) {
+								minDutyPercentage = dutyPercentage;
+							}
+							if(itemQty <= minQty) {
+								minQty = itemQty;
+							}
 						}
 						logger.debug("ORDER TOTAL= "+orderTotal);
 						logger.debug("QUANTITY= "+quantity);
+						logger.debug("MAXIMUM DISCOUNT PERCENTAGE= "+maxDiscPercentage);
+						logger.debug("MAXIMUM DUTY PERCENTAGE= "+maxDutyPercentage);
+						logger.debug("MAXIMUM QUANTITY= "+maxQty);
+						logger.debug("MINIMUM DISCOUNT PERCENTAGE= "+minDiscPercentage);
+						logger.debug("MINIMUM DUTY PERCENTAGE= "+minDutyPercentage);
+						logger.debug("MINIMUM QUANTITY= "+minQty);
 					}else {
 						logger.debug("Not adding "+rule.getRuleName()+"to the list");
 					}
@@ -954,11 +1083,10 @@ public class CalculateCompAmountSimpleInd {
 				}
 			}
 			break;
-		case "Office Location":
-			long ofc_loc_id = orderDetail.getOfficeLocation().getId();
-			long id = Long.parseLong(value);
+		case "Office Name":
+			String ofcName = orderDetail.getOfficeLocation().getOfficeName();			
 			if(condition.equals("equal")) {
-				if(ofc_loc_id == id) {
+				if(ofcName.equalsIgnoreCase(value)) {
 					if(!notFlag) {
 						return true;
 					}
@@ -968,7 +1096,29 @@ public class CalculateCompAmountSimpleInd {
 					}
 				}
 			}
-			
+			else if(condition.equals("starts with")) {
+				value=value.toUpperCase();
+				if(ofcName.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(ofcName.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
 			break;
 		case "Product Type":
 			String prod_type = items.getProduct().getProductSubType().getProductType().getProdType();
@@ -982,7 +1132,84 @@ public class CalculateCompAmountSimpleInd {
 						return true;
 					}
 				}
+			}	
+			
+			else if(condition.equals("starts with")) {
+				if(prod_type.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			
+			else if(condition.equals("ends with")) {
+				if(prod_type.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
 			}		
+			
+			break;
+		case "Order Total":
+			if(condition.equals("equal")) {
+				if(items.getSubtotal() == Integer.parseInt(value) ){
+					if(!notFlag) {
+						return true;
+					}
+					
+				}
+			}else if(condition.equals("less than")) {
+				if(items.getSubtotal() < Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than")) {
+				if(items.getSubtotal() > Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than equal to")) {
+				if(items.getSubtotal() <= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than equal to")) {
+				if(items.getSubtotal() >= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
 			break;
 		case "Quantity":
 			if(condition.equals("equal")) {
@@ -1084,6 +1311,29 @@ public class CalculateCompAmountSimpleInd {
 					}
 				}
 			}
+			else if(condition.equals("starts with")) {
+				if(sale_type.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			else if(condition.equals("ends with")) {
+				if(sale_type.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			
 			break;
 		
 			

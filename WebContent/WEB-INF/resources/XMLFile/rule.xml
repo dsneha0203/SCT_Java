@@ -8,7 +8,7 @@
 		<CompensationValue>0</CompensationValue>
 		<!-- <CompensationFormula>Param 1 * .6 + Param 2 * .7 - Param 3</CompensationFormula>
 		<CompensationParameter>Param 1,Param 2,Param 3</CompensationParameter> -->
-		<CompensationFormula>$1 * 0.6 + P$2 * 0.7 - $3</CompensationFormula>
+		<CompensationFormula>$1 * 0.6 + $2 * 0.7 - $3</CompensationFormula>
 		<CompensationParameter>$Param_1,$Param_2,$Param_3</CompensationParameter>
 	 	<RuleParameters>
 			<!-- <RuleParameter ParameterName="Param 1">
@@ -99,8 +99,8 @@
 					<ConditionList>less than</ConditionList>
 					<ignoreCase>false</ignoreCase>
 				</QualifyingClause>
-				<QualifyingClause value="1">
-					<FieldList>Office Location</FieldList>
+				<QualifyingClause value="Hestingsh House">
+					<FieldList>Office Name</FieldList>
 					<notFlag>false</notFlag>
 					<ConditionList>equal</ConditionList>
 					<ignoreCase>false</ignoreCase>
@@ -201,8 +201,8 @@
 			<Field>Quantity</Field>
 			<AggregateFun>max</AggregateFun>
 		 	<QualifyingClauses>
-				<QualifyingClause value="2">
-					<FieldList>Office Location</FieldList>
+				<QualifyingClause value="Jefello International">
+					<FieldList>Office Name</FieldList>
 					<notFlag>true</notFlag>
 					<ConditionList>equal</ConditionList>
 					<ignoreCase>false</ignoreCase>

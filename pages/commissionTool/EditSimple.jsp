@@ -414,7 +414,8 @@ table td, table th {
 										<tr class="person">
 										<td>
 									<input type="hidden" name="personListNonAgg[].aggFuncName" value="" >
-								&nbsp;FieldName&nbsp;<select
+									<br>
+								&nbsp;Field Name&nbsp;<select
 												name="personListNonAgg[].fieldName" required>
 													<option value="${quali.fieldList.displayName}">---${quali.fieldList.displayName}---</option>
 													<!--<c:forEach items="${listRule2}" var="rule">
@@ -552,7 +553,8 @@ table td, table th {
 												</option>
 											</c:forEach>
 									</select></td>
-											<td>&nbsp;FieldName&nbsp;<select
+									
+											<td>&nbsp;Field Name&nbsp;<select
 												name="personList[].fieldName">
 													<option value="${quali.fieldList.displayName}">---${quali.fieldList.displayName}---</option>
 													<!--<c:forEach items="${listRule2}" var="rule">
@@ -565,7 +567,7 @@ table td, table th {
 															<c:out value="${fieldName}" />
 														</option>
 													</c:forEach>
-											</select>&nbsp;
+											</select>
 											</td>
 										
 												

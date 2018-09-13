@@ -1,0 +1,227 @@
+
+    <title>Employee List</title>
+    <link rel="stylesheet" href="../../../css/kendo.common.min.css" />
+    <link rel="stylesheet" href="../../../css/kendo.default.min.css" />
+
+    <script src="../../../js/jquery-1.12.1.min.js"></script>
+    <script src="../../../js/kendo.all.min.js"></script>
+
+<div align="center"><h3>Employee Details</h3></div>
+
+<div id="example">
+
+
+	<table id="grid" align="center">
+		<colgroup>
+			<col />
+			<col />
+			<col style="width: 100px" />
+			<col style="width: 110px" />
+			<col style="width: 120px" />
+		</colgroup>
+
+		<thead>
+			<tr>
+				<th data-field="Emp_id">Employee_ID</th>
+				<th data-field="name">Employee_Name</th>
+				<th data-field="date">Start Date</th>
+				<th data-field="role">Role</th>
+				<th data-field="manager_id">Manager_Id</th>
+				<th data-field="manager_name">Manager_Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><a href='../../pages/employee/EmployeeDetailsComponent.html'>1000</td>
+				<td>Rashid</td>
+				<td>07-01-2016</td>
+				<td>Trainee</td>
+				<td>2001</td>
+				<td>Joydeep</td>
+			</tr>
+			<tr>
+				<td>1001</td>
+				<td>Swarup</td>
+				<td>20-2-2016</td>
+				<td>Trainee</td>
+				<td>2002</td>
+				<td>Roy</td>
+			</tr>
+
+			<tr>
+				<td>1002</td>
+				<td>Khan</td>
+				<td>08-01-2016</td>
+				<td>Trainee</td>
+				<td>2003</td>
+				<td>pramita</td>
+			</tr>
+
+
+			<tr>
+				<td>1003</td>
+				<td>Reza</td>
+				<td>09-01-2016</td>
+				<td>Trainee</td>
+				<td>2004</td>
+				<td>swarup</td>
+			</tr>
+
+
+			<tr>
+				<td>1004</td>
+				<td>Ram</td>
+				<td>10-01-2016</td>
+				<td>Trainee</td>
+				<td>2005</td>
+				<td>Reza</td>
+			</tr>
+
+			<tr>
+				<td>1005</td>
+				<td>Sam</td>
+				<td>11-01-2016</td>
+				<td>Trainee</td>
+				<td>2006</td>
+				<td>Rashid</td>
+			</tr>
+
+			<tr>
+				<td>1006</td>
+				<td>Puja</td>
+				<td>12-01-2016</td>
+				<td>Trainee</td>
+				<td>2007</td>
+				<td>Reza</td>
+			</tr>
+
+			<tr>
+				<td>1007</td>
+				<td>Rima</td>
+				<td>13-01-2016</td>
+				<td>Trainee</td>
+				<td>2008</td>
+				<td>Puja</td>
+			</tr>
+
+			<tr>
+				<td>1008</td>
+				<td>Alok</td>
+				<td>14-01-2016</td>
+				<td>Trainee</td>
+				<td>2010</td>
+				<td>Rima</td>
+			</tr>
+
+			<tr>
+				<td>1009</td>
+				<td>Sankar</td>
+				<td>15-01-2016</td>
+				<td>Trainee</td>
+				<td>2011</td>
+				<td>Rima</td>
+			</tr>
+
+			<tr>
+				<td>1010</td>
+				<td>Dhayal</td>
+				<td>16-01-2016</td>
+				<td>Trainee</td>
+				<td>2012</td>
+				<td>Sankar</td>
+			</tr>
+
+			<tr>
+				<td>1011</td>
+				<td>Walter</td>
+				<td>17-01-2016</td>
+				<td>Trainee</td>
+				<td>2013</td>
+				<td>Dhyal</td>
+			</tr>
+
+			<tr>
+				<td>1012</td>
+				<td>Hemant</td>
+				<td>18-01-2016</td>
+				<td>Trainee</td>
+				<td>2014</td>
+				<td>Walter</td>
+			</tr>
+
+			<tr>
+				<td>1013</td>
+				<td>Rash</td>
+				<td>19-01-2016</td>
+				<td>Trainee</td>
+				<td>2015</td>
+				<td>Hemant</td>
+			</tr>
+
+			<tr>
+				<td>1014</td>
+				<td>Zaid</td>
+				<td>19-01-2016</td>
+				<td>Trainee</td>
+				<td>2017</td>
+				<td>Rash</td>
+			</tr>
+
+			<tr>
+				<td>1015</td>
+				<td>Waid</td>
+				<td>20-01-2016</td>
+				<td>Trainee</td>
+				<td>2018</td>
+				<td>Zaid</td>
+			</tr>
+
+			<tr>
+				<td>1016</td>
+				<td>Lena</td>
+				<td>21-01-2016</td>
+				<td>Trainee</td>
+				<td>2018</td>
+				<td>zaid</td>
+			</tr>
+
+
+		</tbody>
+	</table>
+
+	<script>
+      
+     			$(document).ready(function() {
+                    $("#grid").kendoGrid({
+                    	 pageSize: 15,
+                    	 height: 450, 
+                    	 scrollable: {
+                             virtual: true
+                         },                                                
+                          //scrollable: true,
+                          sortable: true,
+                          resizable: true,
+                          reorderable: true,
+                          //selectable: true,
+                          selectable: "multiple",
+                          filterable: {
+                        	  extra: false, 
+                        	   operators: { 
+                        	       string: {   
+                        	            contains: "Contains",
+                        	            startswith: "Starts With",
+                        	            endswith: "Ends With",
+                        	            //eq: "Is Equal To"
+                        	        }
+                        	    }
+                        	},                                                   
+                          columnMenu: true,                          
+                          pageable: {
+                              refresh: true,
+                              pageSizes: true,
+                              buttonCount: 5
+                          },                                                                                                       
+                    });                       
+                });             
+   			</script>
+</div>
