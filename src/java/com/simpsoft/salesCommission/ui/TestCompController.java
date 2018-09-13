@@ -303,47 +303,10 @@ public class TestCompController {
 								}
 								assignmentParameters.add(assignmentParameter);
 							}
-//						}else {
-//							
-//							RuleAssUI rul = (RuleAssUI) itr.next();
-//							if(rul.getRuleAssignmentParameter() != null) {
-//								for (RuleAssignmentParameter rul2 : rul.getRuleAssignmentParameter()) {
-//									RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
-//									logger.debug("ParameterName: " + rul2.getParameterName());
-//									assignmentParameter.setParameterName(rul2.getParameterName());
-//									logger.debug("OverwriteValue: " + rul2.getOverwriteValue());
-//									assignmentParameter.setOverwriteValue(rul2.getOverwriteValue());
-//									if(rul2.getTargetDefinition() != null) {
-//										logger.debug("TargetDefinition: " + rul2.getTargetDefinition().getDisplayName());
-//										assignmentParameter.setTargetDefinition(rul2.getTargetDefinition());
-//									}
-//									assignmentParameters.add(assignmentParameter);
-//								}
-//							}
-//							
-//						}
+
 						
 					}
-//					else {
-//						RuleAssUI rul2 = (RuleAssUI) itr.next();
-//						if(rul2.getRuleAssignmentParameter() != null) {
-//							for (RuleAssignmentParameter rul3 : rul2.getRuleAssignmentParameter()) {
-//								RuleAssignmentParameter assignmentParameter = new RuleAssignmentParameter();
-//								logger.debug("ParameterName: " + rul3.getParameterName());
-//								assignmentParameter.setParameterName(rul3.getParameterName());
-//								logger.debug("OverwriteValue: " + rul3.getOverwriteValue());
-//								assignmentParameter.setOverwriteValue(rul3.getOverwriteValue());
-//								if(rul3.getTargetDefinition() != null) {
-//									logger.debug("TargetDefinition: " + rul3.getTargetDefinition().getDisplayName());
-//									assignmentParameter.setTargetDefinition(rul3.getTargetDefinition());
-//								}
-//								assignmentParameters.add(assignmentParameter);
-//							}
-//						}
-//						
-//						itr.previous();
-//						counter++;
-//					}
+
 					
 				}
 				

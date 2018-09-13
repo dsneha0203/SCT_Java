@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.simpsoft.salesCommission.app.model.CalculationRoster;
 import com.simpsoft.salesCommission.app.model.CalculationSimple;
+import com.simpsoft.salesCommission.app.model.Employee;
 import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.OrderDetail;
 import com.simpsoft.salesCommission.app.model.OrderLineItems;
@@ -35,6 +36,10 @@ import com.simpsoft.salesCommission.app.model.RuleAssignmentDetails;
 import com.simpsoft.salesCommission.app.model.RuleAssignmentParameter;
 import com.simpsoft.salesCommission.app.model.RuleComposite;
 import com.simpsoft.salesCommission.app.model.RuleSimple;
+import com.simpsoft.salesCommission.app.model.Target;
+import com.simpsoft.salesCommission.app.model.TargetDefinition;
+
+import java.util.Iterator;
 
 @Component
 public class CalculationAPI {
@@ -889,7 +894,7 @@ public class CalculationAPI {
 
 	
 
-	public int getParameterValue(String param, long detailsId) {
+	public int getParameterValue(String param, long detailsId, long empId, Date ruleCalcStartDate, Date ruleCalcEndDate) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		RuleAssignmentDetails assignmentDetails = (RuleAssignmentDetails)session.get(RuleAssignmentDetails.class, detailsId);
@@ -901,10 +906,92 @@ public class CalculationAPI {
 					return Integer.parseInt(assignmentParameter.getDefaultValue());
 				}else if(assignmentParameter.getValueType().equals("overwrite")) {
 					return Integer.parseInt(assignmentParameter.getOverwriteValue());
+				}else {
+					logger.debug("VALUE TYPE = OVERLAY");
+					// get the target value for this parameter based on frequency and dates
+					TargetDefinition definition = assignmentParameter.getTargetDefinition();
+					List employees = session.createQuery("FROM Employee").list();
+					List<Target> empTargetList = new ArrayList<>();
+					for(Iterator itr = employees.iterator(); itr.hasNext();) {
+						Employee emp = (Employee)itr.next();
+						if(emp.getId() == empId) {
+							empTargetList = emp.getTarget();
+							break;
+						}
+					}
+					if(empTargetList.size() > 0) {
+						List<Target> modifiedEmpTargetList = new ArrayList<>();
+						for(Target target : empTargetList) {
+							TargetDefinition targetDefinition = target.getTargetDefinition();
+							if(targetDefinition == definition) {
+								modifiedEmpTargetList.add(target);
+							}
+						}
+						if(modifiedEmpTargetList.size() > 0) {
+							Frequency assgFreq = assignmentDetails.getFrequency();
+							for(Target target : modifiedEmpTargetList) {
+								Frequency targetFreq = target.getFrequency();
+								Date targetStartDate = target.getStartDate();
+								Date targetEndDate = target.getTerminationDate();
+								boolean qualified = checkValidityForTarget(assgFreq, targetFreq, targetStartDate, targetEndDate, 
+										ruleCalcStartDate, ruleCalcEndDate);
+								if(qualified == true) {
+									logger.debug("OVERLAY VALUE FOR PARAM= "+target.getValue());
+									return target.getValue();
+								}
+							}
+							logger.debug("OVERLAY VALUE FOR PARAM=0 ");
+							return 0;
+						}else {
+							logger.debug("OVERLAY VALUE FOR PARAM= 0");
+							return 0;
+						}
+					}
 				}
 			}
 		}
 		return 0;
+	}
+
+	private boolean checkValidityForTarget(Frequency assgFreq, Frequency targetFreq, Date targetStartDate,
+			Date targetEndDate, Date ruleCalcStartDate, Date ruleCalcEndDate) {
+		if(assgFreq == targetFreq) {
+			Date TS = targetStartDate;
+			logger.debug("TARGET START DATE= "+TS);
+			Date TE = targetEndDate;
+			logger.debug("TARGET END DATE= "+TE);
+			Date RS = ruleCalcStartDate;
+			logger.debug("RULE CALC START DATE= "+RS);
+			Date RE = ruleCalcEndDate;
+			logger.debug("RULE CALC END DATE= "+RE);
+			
+			if(TS.before(RS) && TE.after(RE)) {
+				logger.debug("TS IS BEFORE RS AND TE IS AFTER RE");
+				return true;
+			}
+			else if(TS.after(RS) && TE.before(RE)) {
+				logger.debug("TS IS AFTER RS AND TE IS BEFORE RE");
+				return true;
+			}
+			else if(TS.equals(RS) && TE.before(RE)) {
+				logger.debug("TS IS EQUAL TO RS AND TE IS BEFORE RE");
+				return true;
+			}
+			else if(TS.after(RS) && TE.equals(RE)) {
+				logger.debug("TS IS AFTER RS AND TE IS EQUAL TO RE");
+				return true;
+			}
+			else if(TS.equals(RS) && TE.equals(RE)) {
+				logger.debug("TS IS EQUAL TO RS AND TE IS EQUAL TO RE");
+				return true;
+			}
+			else {
+				return false;
+			}
+		}else {
+			return false;
+		}
+		
 	}
 
 	public long getAssignmentDetailId(long assgId, Rule satisfiedRule) {

@@ -420,10 +420,24 @@ public class CalculateCompAmountSimpleInd {
 													long detailsId = calcAPI.getAssignmentDetailId(assgId, satisfiedRule);
 													logger.debug("ASSG DETAILS ID = "+detailsId);
 													if(detailsId != 0) {
-														// get the parameter value
-														int param_val = calcAPI.getParameterValue(param, detailsId);
-														logger.debug("PARAM VALUE= "+param_val);
-														paramValues.add((double)param_val);
+														//get the rule calc start and end dates of the rule
+														for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
+															Rule keyRule = rule_dates_map.getKey();
+															if(keyRule == rule) {
+																Map<Date,Date> dates_map = rule_dates_map.getValue();
+																for(Map.Entry<Date, Date> entry2 : dates_map.entrySet()) {
+																	Date ruleCalcStartDate = entry2.getKey();
+																	Date ruleCalcEndDate = entry2.getValue();
+																	// get the parameter value
+																	int param_val = calcAPI.getParameterValue(param, detailsId,emp.getId(),
+																			ruleCalcStartDate, ruleCalcEndDate);
+																	logger.debug("PARAM VALUE= "+param_val);
+																	paramValues.add((double)param_val);
+																}
+																break;
+															}
+														}
+														
 														
 														
 													}
