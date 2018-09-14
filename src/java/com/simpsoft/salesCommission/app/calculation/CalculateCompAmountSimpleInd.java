@@ -40,6 +40,8 @@ import com.simpsoft.salesCommission.app.model.RuleAssignmentDetails;
 import com.simpsoft.salesCommission.app.model.RuleComposite;
 import com.simpsoft.salesCommission.app.model.RuleSimple;
 
+import javassist.bytecode.Mnemonic;
+
 public class CalculateCompAmountSimpleInd {
 	
 	private static final Logger logger = Logger.getLogger(CalculateCompAmountSimpleInd.class);
@@ -59,6 +61,8 @@ public class CalculateCompAmountSimpleInd {
 	private static HashMap<Rule, List<Double>> rule_output_map = null;
 	private static List<CalculationSimple> calcSimpList = new ArrayList<>();
 	private static List<CalculationSimple> calcSimpListRule = null;
+	private static Map<Rule, Map<String, Integer>> ruleMaxValuesMap = null;
+	private static Map<Rule, Map<String, Integer>> ruleMinValuesMap = null;
 	
 	
 	public static void main(String[] args) throws ParseException, ScriptException {
@@ -123,6 +127,8 @@ public class CalculateCompAmountSimpleInd {
 				rule_ordTotal_qty = new HashMap<Rule, List<List<Double>>>();
 				empAssg_rule_ordTotal_qty = new HashMap<Long, HashMap<Rule,List<List<Double>>>>();
 				rule_freq_map = new HashMap<Rule,Map<Date,Date>>();
+				ruleMaxValuesMap = new HashMap<Rule,Map<String, Integer>>();
+				ruleMinValuesMap = new HashMap<Rule,Map<String, Integer>>();
 				
 					List<RuleAssignmentDetails> assignmentDetails = assignment.getRuleAssignmentDetails();
 					for(RuleAssignmentDetails details : assignmentDetails) {
@@ -409,10 +415,48 @@ public class CalculateCompAmountSimpleInd {
 											
 									}
 									else if(agg_func_name.equals("max")) {
-										
+										rule_output_map=new HashMap<Rule, List<Double>>();
+										List<Double> rule_output_list = new ArrayList<>();
+										for(Map.Entry<Rule, Map<String,Integer>> entry : ruleMaxValuesMap.entrySet()) {
+											Rule keyRule = entry.getKey();
+											if(keyRule.getRuleName().equals(satisfiedRule.getRuleName())) {
+												Map<String, Integer> map = entry.getValue();
+												logger.debug("field name= "+ ruleSimple.getField());
+												if(ruleSimple.getField().equalsIgnoreCase("Quantity")) {
+													rule_output = map.get("MaxQty");
+													logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
+													
+												}else {
+													rule_output = map.get("MaxOrderTotal");
+													logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
+												}
+												rule_output_list.add(rule_output);
+												
+											}
+											rule_output_map.put(keyRule, rule_output_list);
+										}
 									}
 									else if(agg_func_name.equals("min")) {
-										
+										rule_output_map=new HashMap<Rule, List<Double>>();
+										List<Double> rule_output_list = new ArrayList<>();
+										for(Map.Entry<Rule, Map<String,Integer>> entry : ruleMinValuesMap.entrySet()) {
+											Rule keyRule = entry.getKey();
+											if(keyRule.getRuleName().equals(satisfiedRule.getRuleName())) {
+												Map<String, Integer> map = entry.getValue();
+												logger.debug("field name= "+ ruleSimple.getField());
+												if(ruleSimple.getField().equalsIgnoreCase("Quantity")) {
+													rule_output = map.get("MinQty");
+													logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
+												}else {
+													rule_output = map.get("MinOrderTotal");
+													logger.debug("RULE_OUPTUT_VALUE= "+rule_output);
+												}
+												rule_output_list.add(rule_output);												
+												
+												
+											}
+											rule_output_map.put(keyRule, rule_output_list);
+										}
 									}
 									else {
 										// for count
@@ -446,8 +490,6 @@ public class CalculateCompAmountSimpleInd {
 															}
 														}
 														
-														
-														
 													}
 													break;
 												}
@@ -456,77 +498,78 @@ public class CalculateCompAmountSimpleInd {
 										}
 									}
 							
-									
 								}
 							}
-							
-							if(!prevRule.equalsIgnoreCase(satisfiedRule.getRuleName())) {
-								for(Map.Entry<Rule, List<Double>> entry : rule_output_map.entrySet()) {
-									Rule rule= entry.getKey();
-									if(rule == satisfiedRule) {
-										int count_loop = 0;
-											List<Double> values = entry.getValue();
-											for(Double value : values) {
-												
-												
-												ArrayList<Double> newParamValues = new ArrayList<>();
-												newParamValues.addAll(paramValues);
-												for(int a= 0; a<params.length; a++) {
-													String param = params[a];
-													if(param.equalsIgnoreCase("$RULE_OUTPUT")) {
-														newParamValues.add(a, value);
-														
-														
+							logger.debug("rule output map size= "+ rule_output_map.size());
+							if(rule_output_map.size() > 0) {
+								if(!prevRule.equalsIgnoreCase(satisfiedRule.getRuleName())) {
+									for(Map.Entry<Rule, List<Double>> entry : rule_output_map.entrySet()) {
+										Rule rule= entry.getKey();
+										if(rule == satisfiedRule) {
+											int count_loop = 0;
+												List<Double> values = entry.getValue();
+												for(Double value : values) {
+													
+													
+													ArrayList<Double> newParamValues = new ArrayList<>();
+													newParamValues.addAll(paramValues);
+													for(int a= 0; a<params.length; a++) {
+														String param = params[a];
+														if(param.equalsIgnoreCase("$RULE_OUTPUT")) {
+															newParamValues.add(a, value);
+															
+															
+														}
 													}
-												}
-												
-												Object compAmt= replaceAndCalcCompAmt(newParamValues,formula);
-												
-												// get rule start and end calc dates
-												 for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
-													Rule keyRule = rule_dates_map.getKey();
-													if(keyRule == rule) {
-														CalculationSimple calculationSimple = new CalculationSimple();
-														Date ruleCalcStartDate=new Date();
-														Date ruleCalcEndDate=new Date();
-														Map<Date,Date> dates = rule_dates_map.getValue();
-														Object startDate_key = dates.keySet().toArray()[count_loop];
-														Object endDate_val = dates.get(startDate_key);
+													
+													Object compAmt= replaceAndCalcCompAmt(newParamValues,formula);
+													
+													// get rule start and end calc dates
+													 for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
+														Rule keyRule = rule_dates_map.getKey();
+														if(keyRule == rule) {
+															CalculationSimple calculationSimple = new CalculationSimple();
+															Date ruleCalcStartDate=new Date();
+															Date ruleCalcEndDate=new Date();
+															Map<Date,Date> dates = rule_dates_map.getValue();
+															Object startDate_key = dates.keySet().toArray()[count_loop];
+															Object endDate_val = dates.get(startDate_key);
+																
+																ruleCalcStartDate = (Date) startDate_key;
+																ruleCalcEndDate = (Date) endDate_val;
+																
+																
+																
+																logger.debug("---DATA TO BE SAVED---");
+																logger.debug("EMP ID = "+emp.getId());
+																logger.debug("RULE ID= "+rule.getId());
+																logger.debug("CALC START DATE= "+ruleCalcStartDate);
+																logger.debug("CALC END DATE= "+ruleCalcEndDate);
+																logger.debug("COMP AMT= "+compAmt);
+																
+																calculationSimple.setCalStartDate(ruleCalcStartDate);
+																calculationSimple.setCalEndDate(ruleCalcEndDate);
+																calculationSimple.setCompensationAmount((double) compAmt);
+																calculationSimple.setDummyCalcInternal(false);
+																calculationSimple.setRule(satisfiedRule);
+																calculationSimple.setEmployee(emp);
+																
+																calcSimpList.add(calculationSimple);
+																
+																count_loop+=1;
 															
-															ruleCalcStartDate = (Date) startDate_key;
-															ruleCalcEndDate = (Date) endDate_val;
-															
-															
-															
-															logger.debug("---DATA TO BE SAVED---");
-															logger.debug("EMP ID = "+emp.getId());
-															logger.debug("RULE ID= "+rule.getId());
-															logger.debug("CALC START DATE= "+ruleCalcStartDate);
-															logger.debug("CALC END DATE= "+ruleCalcEndDate);
-															logger.debug("COMP AMT= "+compAmt);
-															
-															calculationSimple.setCalStartDate(ruleCalcStartDate);
-															calculationSimple.setCalEndDate(ruleCalcEndDate);
-															calculationSimple.setCompensationAmount((double) compAmt);
-															calculationSimple.setDummyCalcInternal(false);
-															calculationSimple.setRule(satisfiedRule);
-															calculationSimple.setEmployee(emp);
-															
-															calcSimpList.add(calculationSimple);
-															
-															count_loop+=1;
+														}
 														
 													}
 													
 												}
 												
-											}
-											
+										}
+										prevRule= satisfiedRule.getRuleName();
 									}
-									prevRule= satisfiedRule.getRuleName();
 								}
 							}
-						
+							
 						}		
 			
 
@@ -583,6 +626,9 @@ public class CalculateCompAmountSimpleInd {
 				sum_ordTotal_Qty_list = new ArrayList<>();
 				double orderTotal=0;
 				double quantity=0;
+				Map<String, Integer> maxValues = new HashMap<>();
+				Map<String, Integer> minValues = new HashMap<>();
+				
 				List<QualifyingClause> qualList = calcAPI.getSimpRuleDetails(ruleAPI, rule);
 				List<QualifyingClause> nonAggQualList = new ArrayList<>();
 				List<QualifyingClause> aggQualList = new ArrayList<>();
@@ -644,16 +690,23 @@ public class CalculateCompAmountSimpleInd {
 							if(isSatisfied == false) {
 								flag+=1;
 							}
+							
+							
 						}
 						
 						else if(aggClause.getAggregateFunctions().getFunctionName().equals("max")) {
+							
 							int maxDiscPercentage=0;
 							int maxDutyPercentage=0;
 							int maxQty = 0;
+							int maxSubTotal = 0;
+							
 							for(OrderLineItems items : filteredLineItemsList) {
 								int discPercentage = items.getDiscountPercentage();
 								int dutyPercentage = items.getDutyPercentage();
 								int itemQty = items.getQuantity();
+								int subTotal = (int) items.getSubtotal();
+								
 								if(discPercentage >= maxDiscPercentage) {
 									maxDiscPercentage = discPercentage;
 								}
@@ -663,7 +716,14 @@ public class CalculateCompAmountSimpleInd {
 								if(itemQty >= maxQty) {
 									maxQty = itemQty;
 								}
+								if(subTotal >= maxSubTotal) {
+									maxSubTotal = subTotal;
+								}
 							}
+							maxValues.put("MaxDiscPercent", maxDiscPercentage);
+							maxValues.put("MaxDutyPercent", maxDutyPercentage);
+							maxValues.put("MaxQty", maxQty);
+							maxValues.put("MaxOrderTotal", maxSubTotal);
 							
 							int compareValue = 0;
 							String displayName = aggClause.getFieldList().getDisplayName();
@@ -680,6 +740,9 @@ public class CalculateCompAmountSimpleInd {
 							else if(displayName.equalsIgnoreCase("Quantity")) {
 								compareValue = maxQty;
 							}
+							else if(displayName.equalsIgnoreCase("Order Total")) {
+								compareValue = maxSubTotal;
+							}
 							
 							boolean isSatisfied = checkAggQual(compareValue, notFlag, condition, (double) value);
 							logger.debug("isSatisfied for Agg Qual clause= "+isSatisfied);
@@ -687,16 +750,26 @@ public class CalculateCompAmountSimpleInd {
 								flag+=1;
 							}
 							
+							logger.debug("MAXIMUM DISCOUNT PERCENTAGE= "+maxDiscPercentage);
+							logger.debug("MAXIMUM DUTY PERCENTAGE= "+maxDutyPercentage);
+							logger.debug("MAXIMUM QUANTITY= "+maxQty);
+							logger.debug("MAXIMUM ORDER(SUB) TOTAL= "+maxSubTotal);
+							
 						}
 						
 						else if(aggClause.getAggregateFunctions().getFunctionName().equals("min")) {
-							int minDiscPercentage=0;
-							int minDutyPercentage=0;
-							int minQty = 0;
+							
+							int minDiscPercentage=999999999;
+							int minDutyPercentage=999999999;
+							int minQty = 999999999;
+							int minSubTotal = 999999999;
+							
 							for(OrderLineItems items : filteredLineItemsList) {
 								int discPercentage = items.getDiscountPercentage();
 								int dutyPercentage = items.getDutyPercentage();
 								int itemQty = items.getQuantity();
+								int subTotal = (int) items.getSubtotal();
+								
 								if(discPercentage <= minDiscPercentage) {
 									minDiscPercentage = discPercentage;
 								}
@@ -706,7 +779,15 @@ public class CalculateCompAmountSimpleInd {
 								if(itemQty <= minQty) {
 									minQty = itemQty;
 								}
+								if(subTotal <= minSubTotal) {
+									minSubTotal = subTotal;
+								}
 							}
+							
+							minValues.put("MinDiscPercent", minDiscPercentage);
+							minValues.put("MinDutyPercent", minDutyPercentage);
+							minValues.put("MinQty", minQty);
+							minValues.put("MinOrderTotal", minSubTotal);
 							
 							int compareValue = 0;
 							String displayName = aggClause.getFieldList().getDisplayName();
@@ -715,7 +796,7 @@ public class CalculateCompAmountSimpleInd {
 							String sValue = aggClause.getValue();
 							int value= Integer.parseInt(sValue);
 							if(displayName.equalsIgnoreCase("Discount Percentage")) {
-								compareValue= minDiscPercentage;								
+								compareValue= minDiscPercentage;							
 							}
 							else if(displayName.equalsIgnoreCase("Duty Percentage")) {
 								compareValue= minDutyPercentage;
@@ -723,17 +804,29 @@ public class CalculateCompAmountSimpleInd {
 							else if(displayName.equalsIgnoreCase("Quantity")) {
 								compareValue = minQty;
 							}
-							
+							else if(displayName.equalsIgnoreCase("Order Total")) {
+								compareValue = minSubTotal;
+							}
 							boolean isSatisfied = checkAggQual(compareValue, notFlag, condition, (double) value);
 							logger.debug("isSatisfied for Agg Qual clause= "+isSatisfied);
 							if(isSatisfied == false) {
 								flag+=1;
 							}
+							
+							logger.debug("MINIMUM DISCOUNT PERCENTAGE= "+minDiscPercentage);
+							logger.debug("MINIMUM DUTY PERCENTAGE= "+minDutyPercentage);
+							logger.debug("MINIMUM QUANTITY= "+minQty);
+							logger.debug("MINIMUM ORDER(SUB) TOTAL= "+minSubTotal);
+							
 						}
 						
 						else {
 							//for count
 						}
+						
+						
+						
+						
 					}
 					
 					//rule is qualified if flag value is 0
@@ -742,6 +835,8 @@ public class CalculateCompAmountSimpleInd {
 						qualifiedRuleListOfEmp.add(rule);
 						added=true;
 						listRules.add(rule);
+						ruleMaxValuesMap.put(rule, maxValues);
+						ruleMinValuesMap.put(rule, minValues);
 					}else {
 						logger.debug("Not adding "+rule.getRuleName()+"to the list");
 					}
@@ -757,9 +852,11 @@ public class CalculateCompAmountSimpleInd {
 						int maxDiscPercentage=0;
 						int maxDutyPercentage=0;
 						int maxQty = 0;
-						int minDiscPercentage=0;
-						int minDutyPercentage=0;
-						int minQty = 0;
+						int maxSubTotal = 0;
+						int minDiscPercentage=999999999;
+						int minDutyPercentage=999999999;
+						int minQty = 999999999;
+						int minSubTotal = 999999999;
 						
 						for(OrderLineItems items : filteredLineItemsList) {
 							orderTotal += items.getSubtotal();
@@ -768,6 +865,7 @@ public class CalculateCompAmountSimpleInd {
 							int discPercentage = items.getDiscountPercentage();
 							int dutyPercentage = items.getDutyPercentage();
 							int itemQty = items.getQuantity();
+							int subTotal = (int) items.getSubtotal();
 							if(discPercentage >= maxDiscPercentage) {
 								maxDiscPercentage = discPercentage;
 							}
@@ -776,6 +874,9 @@ public class CalculateCompAmountSimpleInd {
 							}
 							if(itemQty >= maxQty) {
 								maxQty = itemQty;
+							}
+							if(subTotal >= maxSubTotal) {
+								maxSubTotal = subTotal;
 							}
 							
 							
@@ -788,15 +889,33 @@ public class CalculateCompAmountSimpleInd {
 							if(itemQty <= minQty) {
 								minQty = itemQty;
 							}
+							if(subTotal <= minSubTotal) {
+								minSubTotal = subTotal;
+							}
+							
 						}
+						
+						maxValues.put("MaxDiscPercent", maxDiscPercentage);
+						maxValues.put("MaxDutyPercent", maxDutyPercentage);
+						maxValues.put("MaxQty", maxQty);
+						maxValues.put("MaxOrderTotal", maxSubTotal);
+
+						minValues.put("MinDiscPercent", minDiscPercentage);
+						minValues.put("MinDutyPercent", minDutyPercentage);
+						minValues.put("MinQty", minQty);
+						minValues.put("MinOrderTotal", minSubTotal);
+						
+						
 						logger.debug("ORDER TOTAL= "+orderTotal);
 						logger.debug("QUANTITY= "+quantity);
 						logger.debug("MAXIMUM DISCOUNT PERCENTAGE= "+maxDiscPercentage);
 						logger.debug("MAXIMUM DUTY PERCENTAGE= "+maxDutyPercentage);
 						logger.debug("MAXIMUM QUANTITY= "+maxQty);
+						logger.debug("MAXIMUM ORDER(SUB) TOTAL= "+maxSubTotal);
 						logger.debug("MINIMUM DISCOUNT PERCENTAGE= "+minDiscPercentage);
 						logger.debug("MINIMUM DUTY PERCENTAGE= "+minDutyPercentage);
 						logger.debug("MINIMUM QUANTITY= "+minQty);
+						logger.debug("MINIMUM ORDER(SUB) TOTAL= "+minSubTotal);
 					}else {
 						logger.debug("Not adding "+rule.getRuleName()+"to the list");
 					}
@@ -805,7 +924,8 @@ public class CalculateCompAmountSimpleInd {
 					sum_ordTotal_Qty_list.add(orderTotal);
 					sum_ordTotal_Qty_list.add(quantity);
 					sum_ordTotal_Qty_list_main.add(sum_ordTotal_Qty_list);
-					
+					ruleMaxValuesMap.put(rule, maxValues);
+					ruleMinValuesMap.put(rule, minValues);
 					
 				}
 				rule_ordTotal_qty.put(rule, sum_ordTotal_Qty_list_main);
@@ -968,7 +1088,7 @@ public class CalculateCompAmountSimpleInd {
 			}else if(condition.equals("greater than equal to")) {
 				if(items.getDiscountPercentage() >= Integer.parseInt(value)) {
 					if(!notFlag) {
-						logger.debug("Discount Percentage "+items.getDiscountPercentage()+" is lgreater than equal to value= "+value );
+						logger.debug("Discount Percentage "+items.getDiscountPercentage()+" is greater than equal to value= "+value );
 						return true;
 					}
 				}else {
@@ -1166,6 +1286,10 @@ public class CalculateCompAmountSimpleInd {
 						return true;
 					}
 					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
 				}
 			}else if(condition.equals("less than")) {
 				if(items.getSubtotal() < Integer.parseInt(value)) {
@@ -1218,6 +1342,10 @@ public class CalculateCompAmountSimpleInd {
 						return true;
 					}
 					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
 				}
 			}else if(condition.equals("less than")) {
 				if(items.getQuantity() < Integer.parseInt(value)) {

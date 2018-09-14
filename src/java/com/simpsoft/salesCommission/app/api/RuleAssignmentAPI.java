@@ -757,29 +757,37 @@ public class RuleAssignmentAPI {
 	}
 	
 	
-	public RuleParameter getParamValue(String paramName) {
+	public RuleParameter getParamValue(String paramName, Rule rule) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
-		List<RuleParameter> paramList = new ArrayList<>();
-		try {
-		tx = session.beginTransaction();
-		Criteria crit = session.createCriteria(RuleParameter.class);
-		crit.add(Restrictions.eq("parameterName", paramName));
-		paramList = crit.list();
-				tx.commit();
-
-		} catch (HibernateException e) {
-			if (tx != null)
-				tx.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
+//		List<RuleParameter> paramList = new ArrayList<>();
+//		try {
+//		tx = session.beginTransaction();
+//		Criteria crit = session.createCriteria(RuleParameter.class);
+//		crit.add(Restrictions.eq("parameterName", paramName));
+//		
+//		paramList = crit.list();
+//				tx.commit();
+//
+//		} catch (HibernateException e) {
+//			if (tx != null)
+//				tx.rollback();
+//			e.printStackTrace();
+//		} finally {
+//			session.close();
+//		}
+//		if(paramList.isEmpty()) {
+//			return null;
+//		}else {
+//		return paramList.get(0);
+//		}
+		List<RuleParameter> paramList = rule.getRuleParameter();
+		for(RuleParameter parameter : paramList) {
+			if(parameter.getParameterName().equalsIgnoreCase(paramName)) {
+				return parameter;
+			}
 		}
-		if(paramList.isEmpty()) {
-			return null;
-		}else {
-		return paramList.get(0);
-		}
+		return null;
 	}
 	
 	public RuleAssignment getPreviousRuleAssignmentForEmp(long empID) {

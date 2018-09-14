@@ -375,7 +375,7 @@ public class TestCompController {
 			
 				for(Iterator iterator1 = rpm1.iterator(); iterator1.hasNext();) {
 					RuleAssignmentParameter ruleAssParam = (RuleAssignmentParameter) iterator1.next();
-					String paramValue = (ruleAssApi.getParamValue(ruleAssParam.getParameterName())).getParameterValue();
+					String paramValue = (ruleAssApi.getParamValue(ruleAssParam.getParameterName(), rule)).getParameterValue();
 					logger.debug("PARAM VALUE= "+paramValue);
 					ruleAssParam.setDefaultValue(paramValue);
 					logger.debug("OVERWRITE ="+ruleAssParam.getOverwriteValue());
@@ -540,7 +540,7 @@ public class TestCompController {
 			List<RuleAssignmentParameter> ruleParamList = new ArrayList<>();
 			for(Iterator iterator1 = rpm1.iterator(); iterator1.hasNext();) {
 				RuleAssignmentParameter ruleAssParam = (RuleAssignmentParameter) iterator1.next();
-				String paramValue = (ruleAssApi.getParamValue(ruleAssParam.getParameterName())).getParameterValue();
+				String paramValue = (ruleAssApi.getParamValue(ruleAssParam.getParameterName(), rule1)).getParameterValue();
 				logger.debug("PARAM VALUE= "+paramValue);
 				ruleAssParam.setDefaultValue(paramValue);
 				logger.debug("OVERWRITE ="+ruleAssParam.getOverwriteValue());
