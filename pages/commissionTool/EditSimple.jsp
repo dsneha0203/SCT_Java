@@ -367,11 +367,14 @@ table td, table th {
 											<option
 												value="${listRule4.ruleSimple.aggregateFunctions.functionName}">---${listRule4.ruleSimple.aggregateFunctions.functionName}---</option>
 											
-											<c:forEach items="${listRule1}" var="rule">
+											<!--<c:forEach items="${listRule1}" var="rule">
 												<option value="${rule.functionName}">
 													<c:out value="${rule.functionName}" />
 												</option>
-											</c:forEach>
+											</c:forEach>-->
+											<option value="sum"><c:out value="sum"></c:out></option>
+											<option value="max"><c:out value="max"></c:out></option>
+											<option value="min"><c:out value="min"></c:out></option>
 									</select></td>
 									<td><select name="Field">
 											<option value="${listRule4.ruleSimple.field}">---${listRule4.ruleSimple.field}---</option>

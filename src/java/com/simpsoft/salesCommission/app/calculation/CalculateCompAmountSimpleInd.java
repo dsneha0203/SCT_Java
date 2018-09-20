@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -63,7 +64,9 @@ public class CalculateCompAmountSimpleInd {
 	private static List<CalculationSimple> calcSimpListRule = null;
 	private static Map<Rule, Map<String, Integer>> ruleMaxValuesMap = null;
 	private static Map<Rule, Map<String, Integer>> ruleMinValuesMap = null;
-	
+	private static Map<Employee,Map<OrderLineItemsSplit, Boolean>> empSplitQualMap = new HashMap<>();
+	private static Map<OrderLineItemsSplit, Boolean> splitQualMap = null;
+	private static Map<OrderLineItemsSplit, OrderLineItems> splitLineItemMap =null;
 	
 	public static void main(String[] args) throws ParseException, ScriptException {
 		
@@ -96,7 +99,7 @@ public class CalculateCompAmountSimpleInd {
 		//find rule assignments for all employee
 		findRuleAssgForAllEmp(calcAPI, empAPI, ruleAssAPI, ruleAPI, orderAPI, splitRuleAPI);
 		
-		calcAPI.saveDatesSimpList(startDate, endDate, calcSimpList);
+		calcAPI.saveDatesSimpList(startDate, endDate, calcSimpList, empSplitQualMap);
 	}
 
 	/**
@@ -129,6 +132,9 @@ public class CalculateCompAmountSimpleInd {
 				rule_freq_map = new HashMap<Rule,Map<Date,Date>>();
 				ruleMaxValuesMap = new HashMap<Rule,Map<String, Integer>>();
 				ruleMinValuesMap = new HashMap<Rule,Map<String, Integer>>();
+				
+				splitQualMap = new HashMap<>();
+				splitLineItemMap = new HashMap<>();
 				
 					List<RuleAssignmentDetails> assignmentDetails = assignment.getRuleAssignmentDetails();
 					for(RuleAssignmentDetails details : assignmentDetails) {
@@ -241,6 +247,8 @@ public class CalculateCompAmountSimpleInd {
 								OrderLineItems items= splitRuleAPI.getOrderLineItem(itemsSplit.getId());
 								logger.debug("LINE ITEM ID = "+items.getId());
 								empLineItemsList.add(items);
+								
+								splitLineItemMap.put(itemsSplit, items);
 							}
 						}
 						logger.debug("empLineItemsList size = "+empLineItemsList.size());
@@ -275,6 +283,8 @@ public class CalculateCompAmountSimpleInd {
 																+ "end date = "+ruleCalcEndDate);
 												qualifiedLineItemsList.add(items);
 											}
+										
+											
 										}								
 										if(!qualifiedLineItemsList.isEmpty()) {
 											compareLineItem(calcAPI, orderAPI, ruleAPI, qualifiedLineItemsList, rule);
@@ -308,7 +318,7 @@ public class CalculateCompAmountSimpleInd {
 				}
 					empAssg_rule_ordTotal_qty.put(assignment.getId(), rule_ordTotal_qty);
 					rule_ruleassg.put(assignment.getId(), listRules);
-					
+					empSplitQualMap.put(emp, splitQualMap);
 			}
 			if(qualifiedRuleListOfEmp != null) {
 				if(qualifiedRuleListOfEmp.size() > 0 ) {
@@ -458,9 +468,10 @@ public class CalculateCompAmountSimpleInd {
 											rule_output_map.put(keyRule, rule_output_list);
 										}
 									}
-									else {
-										// for count
-									}
+//									else {
+//										// for count
+//										
+//									}
 								}else {
 									if(rule_ruleassg != null && !rule_ruleassg.isEmpty()) {
 										for(Map.Entry<Long, List<Rule>> entry : rule_ruleassg.entrySet()) {
@@ -652,12 +663,22 @@ public class CalculateCompAmountSimpleInd {
 						logger.debug("isSatisfied= "+isSatisfied);
 						if(isSatisfied == true) {
 							filteredLineItemsList.add(items);
-						}					
+						}
+						//get order line item split id from map
+						for(Map.Entry<OrderLineItemsSplit, OrderLineItems> entryMap : splitLineItemMap.entrySet()) {
+							OrderLineItems lineItem = entryMap.getValue();
+							if(lineItem == items) {
+								OrderLineItemsSplit lineItemSplit = entryMap.getKey();
+								splitQualMap.put(lineItemSplit, isSatisfied);
+								break;
+							}
+						}
 					}
 				}
 				logger.debug("FILTEREDLINEITEMSLIST FOR RULE = "+rule.getRuleName());
 				for(OrderLineItems filteredItem : filteredLineItemsList) {
 					logger.debug("FILTERED LINE ITEM ID= "+filteredItem.getId());
+					
 				}
 				
 				
@@ -822,6 +843,55 @@ public class CalculateCompAmountSimpleInd {
 						
 						else {
 							//for count
+							
+							List<String> custNames = new ArrayList<>();
+							List<String> prodNames = new ArrayList<>();
+							List<String> saleTypes = new ArrayList<>();
+							for(OrderLineItems items : filteredLineItemsList) {
+								OrderDetail detail = orderAPI.getOrderDetailFromLineItem(items.getId());
+								String custName = detail.getCustomer().getCustomerName();
+								custNames.add(custName);
+								String prodName = items.getProduct().getProductName();
+								prodNames.add(prodName);
+								String saleType = detail.getSaleType();
+								saleTypes.add(saleType);
+							}
+							List<String> new_custNames = new ArrayList<String>(new HashSet<String>(custNames));
+							int count_custName = new_custNames.size();
+							
+							List<String> new_prodNames = new ArrayList<String>(new HashSet<String>(prodNames));
+							int count_prodName = new_prodNames.size();
+							
+							List<String> new_saleTypes = new ArrayList<String>(new HashSet<String>(saleTypes));
+							int count_saleType = new_saleTypes.size();
+							
+							
+							int compareValue = 0;
+							String displayName = aggClause.getFieldList().getDisplayName();
+							boolean notFlag = aggClause.isNotFlag();
+							String condition = aggClause.getConditionList().getConditionValue();
+							String sValue = aggClause.getValue();
+							int value= Integer.parseInt(sValue);
+							if(displayName.equalsIgnoreCase("Customer Name")) {
+								compareValue= count_custName;							
+							}
+							else if(displayName.equalsIgnoreCase("Product Name")) {
+								compareValue= count_prodName;
+							}
+							else if(displayName.equalsIgnoreCase("Sale Type")) {
+								compareValue = count_saleType;
+							}
+							
+							boolean isSatisfied = checkAggQual(compareValue, notFlag, condition, (double) value);
+							logger.debug("isSatisfied for Agg Qual clause= "+isSatisfied);
+							if(isSatisfied == false) {
+								flag+=1;
+							}
+							
+							logger.debug("COUNT CUSTOMER NAME= "+count_custName);
+							logger.debug("COUNT PRODUCT NAME= "+count_prodName);
+							logger.debug("COUNT SALE TYPE= "+count_saleType);
+							
 						}
 						
 						
@@ -1193,6 +1263,43 @@ public class CalculateCompAmountSimpleInd {
 			}
 			else if(condition.equals("ends with")) {
 				if(custName.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Office Location":
+			String stateName = orderDetail.getOfficeLocation().getAddress().getState().getStateName();
+			if(condition.equals("equal")) {
+				if(stateName.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("starts with")) {
+				value=value.toUpperCase();
+				if(stateName.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(stateName.endsWith(value)) {
 					if(!notFlag) {
 						return true;
 					}

@@ -1,9 +1,12 @@
 package com.simpsoft.salesCommission.app.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -22,6 +25,10 @@ public class CalcDetailsOrderLineItems {
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "qualificationFlag", nullable = false)
 	private  boolean qualificationFlag;
+	
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "ORDER_LINE_ITEMS_SPLIT_ID")
+	private OrderLineItemsSplit itemsSplit;
 	
 	public CalcDetailsOrderLineItems() {
 	}
@@ -67,4 +74,14 @@ public class CalcDetailsOrderLineItems {
 	public void setQualificationFlag(boolean qualificationFlag) {
 		this.qualificationFlag = qualificationFlag;
 	}
+
+	public OrderLineItemsSplit getItemsSplit() {
+		return itemsSplit;
+	}
+
+	public void setItemsSplit(OrderLineItemsSplit itemsSplit) {
+		this.itemsSplit = itemsSplit;
+	}
+	
+	
 }

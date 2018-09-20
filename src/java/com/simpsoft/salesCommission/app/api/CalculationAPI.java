@@ -23,12 +23,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.simpsoft.salesCommission.app.model.CalcDetailsOrderLineItems;
 import com.simpsoft.salesCommission.app.model.CalculationRoster;
 import com.simpsoft.salesCommission.app.model.CalculationSimple;
 import com.simpsoft.salesCommission.app.model.Employee;
 import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.OrderDetail;
 import com.simpsoft.salesCommission.app.model.OrderLineItems;
+import com.simpsoft.salesCommission.app.model.OrderLineItemsSplit;
 import com.simpsoft.salesCommission.app.model.QualifyingClause;
 import com.simpsoft.salesCommission.app.model.Rule;
 import com.simpsoft.salesCommission.app.model.RuleAssignment;
@@ -832,7 +834,7 @@ public class CalculationAPI {
 	}
 	
 	
-	public void saveDatesSimpList(Date startdate, Date enddate, List<CalculationSimple> calcSimpList) {
+	public void saveDatesSimpList(Date startdate, Date enddate, List<CalculationSimple> calcSimpList, Map<Employee, Map<OrderLineItemsSplit, Boolean>> empSplitQualMap) {
 		logger.debug("---IN SAVE DATE METHOD---");
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
@@ -858,6 +860,25 @@ public class CalculationAPI {
 				simple.setEmployee(calculationSimple.getEmployee());
 				simple.setRule(calculationSimple.getRule());
 				simple.setDummyCalcInternal(false);
+				List<CalcDetailsOrderLineItems> calcDetailsOrderLineItems = new ArrayList<>();
+				for(Map.Entry<Employee, Map<OrderLineItemsSplit, Boolean>> entry_main : empSplitQualMap.entrySet()) {
+					if(entry_main.getKey().getId() == calculationSimple.getEmployee().getId()) {
+						logger.debug("FOR EMP ID= "+entry_main.getKey().getId());
+						Map<OrderLineItemsSplit, Boolean> map = entry_main.getValue();
+						for(Map.Entry<OrderLineItemsSplit, Boolean> entry : map.entrySet()) {
+							CalcDetailsOrderLineItems calcDetailsOrderLineItem = new CalcDetailsOrderLineItems();
+							calcDetailsOrderLineItem.setItemsSplit(entry.getKey());
+							logger.debug("ORDER LINE ITEM SPLIT ID= "+entry.getKey().getId());
+							calcDetailsOrderLineItem.setQualificationFlag(entry.getValue());
+							logger.debug("QUALIFICATION FLAG= "+entry.getValue());
+							calcDetailsOrderLineItems.add(calcDetailsOrderLineItem);
+						}
+						simple.setCalcDetailsOrderLineItemsList(calcDetailsOrderLineItems);
+						break;
+					}
+					
+				}
+				
 				calSimp.add(simple);
 				
 				

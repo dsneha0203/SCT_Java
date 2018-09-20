@@ -325,12 +325,16 @@ display:none;
 									<td>Field</td>
 								</tr>
 								<tr>
-									<td><select name="aggregateFunctions"><c:forEach
+									<td><select name="aggregateFunctions">
+											<!--<c:forEach
 												items="${listRule1}" var="rule">
 												<option value="${rule.functionName}">
 													<c:out value="${rule.functionName}" />
 												</option>
-											</c:forEach>
+											</c:forEach>-->
+											<option value="sum"><c:out value="sum"></c:out></option>
+											<option value="max"><c:out value="max"></c:out></option>
+											<option value="min"><c:out value="min"></c:out></option>
 									</select></td>
 									<td><select name="Field">
 									<!--<c:forEach
