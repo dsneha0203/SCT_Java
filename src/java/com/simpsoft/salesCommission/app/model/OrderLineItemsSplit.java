@@ -34,10 +34,10 @@ public class OrderLineItemsSplit {
 	private OrderLineItems orderLineItems; */
 	
 	@Column(name = "splitQuantity")
-	private int splitQuantity;
+	private double splitQuantity;
 	
 	@Column(name = "splitSubTotal")
-	private int splitSubTotal;
+	private double splitSubTotal;
 
 	public OrderLineItemsSplit() {
 	}
@@ -111,28 +111,28 @@ public class OrderLineItemsSplit {
 	/**
 	 * @return the splitQuantity
 	 */
-	public int getSplitQuantity() {
+	public double getSplitQuantity() {
 		return splitQuantity;
 	}
 
 	/**
 	 * @param splitQuantity the splitQuantity to set
 	 */
-	public void setSplitQuantity(int splitQuantity) {
+	public void setSplitQuantity(double splitQuantity) {
 		this.splitQuantity = splitQuantity;
 	}
 
 	/**
 	 * @return the splitSubTotal
 	 */
-	public int getSplitSubTotal() {
+	public double getSplitSubTotal() {
 		return splitSubTotal;
 	}
 
 	/**
 	 * @param splitSubTotal the splitSubTotal to set
 	 */
-	public void setSplitSubTotal(int splitSubTotal) {
+	public void setSplitSubTotal(double splitSubTotal) {
 		this.splitSubTotal = splitSubTotal;
 	}	
 }

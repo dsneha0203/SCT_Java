@@ -20,7 +20,7 @@ public class CalcDetailsOrderLineItems {
 	private long id;
 	
 	@Column(name = "compensationAmount")
-	private  int compensationAmount;
+	private  double compensationAmount;
 	
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "qualificationFlag", nullable = false)
@@ -50,14 +50,14 @@ public class CalcDetailsOrderLineItems {
 	/**
 	 * @return the compensationAmount
 	 */
-	public int getCompensationAmount() {
+	public double getCompensationAmount() {
 		return compensationAmount;
 	}
 
 	/**
 	 * @param compensationAmount the compensationAmount to set
 	 */
-	public void setCompensationAmount(int compensationAmount) {
+	public void setCompensationAmount(double compensationAmount) {
 		this.compensationAmount = compensationAmount;
 	}
 

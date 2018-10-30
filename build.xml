@@ -238,7 +238,7 @@
 			</target>
 	
 	<!-- separate target for calculation  -->
-	<target name="calc" depends="compile, package">
+	<target name="calcInd" depends="compile, package">
 			<java classname="com.simpsoft.salesCommission.app.calculation.CalculateCompAmountSimpleInd"  fork="true"
 																           failonerror="true">
 																		<!-- dd/MM/yyyy -->
@@ -249,6 +249,18 @@
 																	</java> 
 				
 				</target>
+	
+	<target name="calcRank" depends="compile, package">
+				<java classname="com.simpsoft.salesCommission.app.calculation.CalculateCompAmountSimpRank"  fork="true"
+																	           failonerror="true">
+																			<!-- dd/MM/yyyy -->
+																			<arg value="01/10/2018"/>
+																			<arg value="31/12/2018"/>
+																			<classpath refid="build.class.path" />
+																			<classpath path="${temp.dir.classes}" />
+																		</java> 
+					
+					</target>
 	
 	<target name="callJava" depends="restore_db,compile, package">
 		<java classname="com.simpsoft.salesCommission.app.XMLReader.ReadXMLForAggregateFunction"  fork="true"

@@ -44,7 +44,9 @@ import com.simpsoft.salesCommission.app.model.Product;
 import com.simpsoft.salesCommission.app.model.ProductSubType;
 import com.simpsoft.salesCommission.app.model.ProductType;
 import com.simpsoft.salesCommission.app.model.Role;
+import com.simpsoft.salesCommission.app.model.SplitQualifyingClause;
 import com.simpsoft.salesCommission.app.model.SplitRule;
+import com.simpsoft.salesCommission.app.model.SplitRuleBeneficiary;
 import com.simpsoft.salesCommission.app.model.State;
 
 @Component
@@ -366,7 +368,7 @@ public class OrderAPI {
 		return productSubTypeList.get(0);
 	}
 	
-	//search rpoduct sub type by id
+	//search product sub type by id
 	public ProductSubType searchProductSubTypeById(long productSubTypeId) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
@@ -600,6 +602,17 @@ public class OrderAPI {
 						orderLineItemsSplit.setSplitRule(splitRule);
 						orderLineItemsSplit.setBeneficiary(searchEmployee(order.getManager()));
 						orderLineItemsSplit.setBeneficiaryType("MANAGER");
+						
+						boolean satisfied = checkSplitRule(splitRule, orderLineItem,order);
+						if(satisfied == true) {
+							logger.debug("SPLIT PERCENTAGE= "+getSplitPercentage("MANAGER", splitRule));
+							int splitPercentage = getSplitPercentage("MANAGER", splitRule);
+							assignSplitValues(splitPercentage,orderLineItem, orderLineItemsSplit, splitRule);
+						}else {
+							orderLineItemsSplit.setSplitQuantity(0);
+							orderLineItemsSplit.setSplitSubTotal(0);
+						}
+						
 						itemsSplits.add(orderLineItemsSplit);
 						
 					}
@@ -608,7 +621,18 @@ public class OrderAPI {
 						SplitRule splitRule = searchSplitRule(orderLineItem.getSplitRule());
 						orderLineItemsSplit.setSplitRule(splitRule);
 						orderLineItemsSplit.setBeneficiary(searchEmployee(order.getSupportEngineer()));
-						orderLineItemsSplit.setBeneficiaryType("ENGINEER");
+						orderLineItemsSplit.setBeneficiaryType("SUPPORTING ENGINEER");
+						
+						boolean satisfied = checkSplitRule(splitRule, orderLineItem, order);
+						if(satisfied == true) {
+							logger.debug("SPLIT PERCENTAGE= "+getSplitPercentage("SUPPORTING ENGINEER", splitRule));
+							int splitPercentage = getSplitPercentage("SUPPORTING ENGINEER", splitRule);
+							assignSplitValues(splitPercentage,orderLineItem, orderLineItemsSplit, splitRule);
+						}else {
+							orderLineItemsSplit.setSplitQuantity(0);
+							orderLineItemsSplit.setSplitSubTotal(0);
+						}
+						
 						itemsSplits.add(orderLineItemsSplit);
 					}
 					if(!order.getSecondLvlMgr().equals("null")) {
@@ -617,6 +641,17 @@ public class OrderAPI {
 						orderLineItemsSplit.setSplitRule(splitRule);
 						orderLineItemsSplit.setBeneficiary(searchEmployee(order.getSecondLvlMgr()));
 						orderLineItemsSplit.setBeneficiaryType("SECOND LEVEL MANAGER");
+						
+						boolean satisfied = checkSplitRule(splitRule, orderLineItem, order);
+						if(satisfied == true) {
+							logger.debug("SPLIT PERCENTAGE= "+getSplitPercentage("SECOND LEVEL MANAGER", splitRule));
+							int splitPercentage = getSplitPercentage("SECOND LEVEL MANAGER", splitRule);
+							assignSplitValues(splitPercentage,orderLineItem, orderLineItemsSplit, splitRule);
+						}else {
+							orderLineItemsSplit.setSplitQuantity(0);
+							orderLineItemsSplit.setSplitSubTotal(0);
+						}
+				
 						itemsSplits.add(orderLineItemsSplit);
 					}
 					if(!order.getSalesRepresentative().equals("null")) {
@@ -625,6 +660,17 @@ public class OrderAPI {
 						orderLineItemsSplit.setSplitRule(splitRule);
 						orderLineItemsSplit.setBeneficiary(searchEmployee(order.getSalesRepresentative()));
 						orderLineItemsSplit.setBeneficiaryType("SALES REPRESENTATIVE");
+						
+						boolean satisfied = checkSplitRule(splitRule, orderLineItem, order);
+						if(satisfied == true) {
+							logger.debug("SPLIT PERCENTAGE= "+getSplitPercentage("SALES REPRESENTATIVE", splitRule));
+							int splitPercentage = getSplitPercentage("SALES REPRESENTATIVE", splitRule);
+							assignSplitValues(splitPercentage,orderLineItem, orderLineItemsSplit, splitRule);
+						}else {
+							orderLineItemsSplit.setSplitQuantity(0);
+							orderLineItemsSplit.setSplitSubTotal(0);
+						}
+						
 						itemsSplits.add(orderLineItemsSplit);
 					}
 					if(!order.getAdministrator().equals("null")) {
@@ -632,7 +678,18 @@ public class OrderAPI {
 						SplitRule splitRule = searchSplitRule(orderLineItem.getSplitRule());
 						orderLineItemsSplit.setSplitRule(splitRule);
 						orderLineItemsSplit.setBeneficiary(searchEmployee(order.getAdministrator()));
-						orderLineItemsSplit.setBeneficiaryType("ADMINISTRATOR");
+						orderLineItemsSplit.setBeneficiaryType("ADMIN");
+						
+						boolean satisfied = checkSplitRule(splitRule, orderLineItem, order);
+						if(satisfied == true) {
+							logger.debug("SPLIT PERCENTAGE= "+getSplitPercentage("ADMIN", splitRule));
+							int splitPercentage = getSplitPercentage("ADMIN", splitRule);
+							assignSplitValues(splitPercentage,orderLineItem, orderLineItemsSplit, splitRule);
+						}else {
+							orderLineItemsSplit.setSplitQuantity(0);
+							orderLineItemsSplit.setSplitSubTotal(0);
+						}
+				
 						itemsSplits.add(orderLineItemsSplit);
 					}
 					
@@ -652,12 +709,553 @@ public class OrderAPI {
 			Employee employee = searchEmployee(orderRoster.getImportedBy());
 			newOrderRoster.setImportedBy(employee);
 			newOrderRoster.setOrderDetail(newOrderList);
-			Long id = createOrderRoster(newOrderRoster);
+			createOrderRoster(newOrderRoster);
 		}
 
 	}
 
+	private boolean checkSplitRule(SplitRule splitRule, OrderLineItemsXML lineItem, OrderXML order) {
+		
+		Date orderDate =order.getOrderDate();
+		Date startDateSplitRule = splitRule.getStartDate();
+		Date endDateSplitRule = splitRule.getEndDate();
+		if((startDateSplitRule.compareTo(orderDate) * orderDate.compareTo(endDateSplitRule) >= 0) == true) {
+			List<SplitQualifyingClause> clauses = splitRule.getSplitQualifyingClause();
+			if(clauses != null && !clauses.isEmpty()) {
+				for(SplitQualifyingClause clause : clauses) {
+					boolean check= checkSplitQualClause(lineItem, order, clause);
+					if(check==false) {
+						return false;
+					}
+				}
+				
+			}else {
+				return true;
+			}
+		}else {
+			return false;
+		}
 	
+		return true;
+	}
+
+	/**
+	 * @param lineItem
+	 * @param order
+	 * @param clause
+	 */
+	private boolean checkSplitQualClause(OrderLineItemsXML lineItem, OrderXML order, SplitQualifyingClause clause) {
+		String displayName = clause.getFieldList().getDisplayName();
+		String condition = clause.getConditionList().getConditionValue();
+		boolean notFlag = clause.isNotFlag();
+		String value = clause.getValue();
+		
+		switch(displayName) {
+		case "Discount Percentage":
+			if(condition.equals("equal")) {
+				if(lineItem.getDiscountPercentage() == Integer.parseInt(value) ){
+					if(!notFlag) {
+						logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is equal to value= "+value );
+						return true;
+					}					
+				}else {
+					logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is not equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than")) {
+				if(lineItem.getDiscountPercentage() < Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is less than value= "+value );
+						return true;
+					}					
+				}else {
+					logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is not less than value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than")) {
+				if(lineItem.getDiscountPercentage() > Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is greater than value= "+value );
+						return true;
+					}					
+				}else {
+					logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is not greaater than value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than equal to")) {
+				if(lineItem.getDiscountPercentage() <= Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is less than equal to value= "+value );
+						return true;
+					}
+				}else {
+
+					logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is not less than equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than equal to")) {
+				if(lineItem.getDiscountPercentage() >= Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is greater than equal to value= "+value );
+						return true;
+					}
+				}else {
+					logger.debug("Discount Percentage "+lineItem.getDiscountPercentage()+" is not greater than equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+					
+				}
+			}
+			break;
+		case "Duty Percentage":
+			if(condition.equals("equal")) {
+				if(lineItem.getDutyPercentage() == Integer.parseInt(value) ){
+					if(!notFlag) {
+						logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is equal to value= "+value );
+						return true;
+					}
+				}else {
+					logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is not equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than")) {
+				if(lineItem.getDutyPercentage() < Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is less than value= "+value );
+						return true;
+					}
+				}else {
+
+					logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is not less than value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than")) {
+				if(lineItem.getDutyPercentage() > Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is greater than value= "+value );
+						return true;
+					}
+				}else {
+
+					logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is not greater than value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than equal to")) {
+				if(lineItem.getDutyPercentage() <= Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is less than equal to value= "+value );
+						return true;
+					}
+				}else {
+
+					logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is not less than equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than equal to")) {
+				if(lineItem.getDutyPercentage() >= Integer.parseInt(value)) {
+					if(!notFlag) {
+						logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is greater than equal to value= "+value );
+						return true;
+					}
+				}else {
+
+					logger.debug("Duty Percentage "+lineItem.getDutyPercentage()+" is not greater than equal to value= "+value );
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Customer Name":
+			String custName =order.getCustomer();
+			
+			if(condition.equals("equal")) {
+				if(custName.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("starts with")) {
+				if(custName.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(custName.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Office Location":
+			String stateName = order.getOfficeLocation().getAddress().getState().getStateName();
+			if(condition.equals("equal")) {
+				if(stateName.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("starts with")) {
+				value=value.toUpperCase();
+				if(stateName.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(stateName.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Office Name":
+			String ofcName = order.getOfficeLocation().getOfficeName();			
+			if(condition.equals("equal")) {
+				if(ofcName.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("starts with")) {
+				value=value.toUpperCase();
+				if(ofcName.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(ofcName.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Product Type":
+			
+			String prod_type = searchProduct(lineItem.getProduct()).getProductSubType().getProductType().getProdType();
+			if(condition.equals("equal")) {
+				if(prod_type.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			
+			else if(condition.equals("starts with")) {
+				if(prod_type.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			
+			else if(condition.equals("ends with")) {
+				if(prod_type.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}		
+			
+			break;
+		case "Order Total":
+			if(condition.equals("equal")) {
+				if(lineItem.getSubtotal() == Integer.parseInt(value) ){
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than")) {
+				if(lineItem.getSubtotal() < Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than")) {
+				if(lineItem.getSubtotal() > Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than equal to")) {
+				if(lineItem.getSubtotal() <= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than equal to")) {
+				if(lineItem.getSubtotal() >= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Quantity":
+			if(condition.equals("equal")) {
+				if(lineItem.getQuantity() == Integer.parseInt(value) ){
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than")) {
+				if(lineItem.getQuantity() < Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than")) {
+				if(lineItem.getQuantity() > Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("less than equal to")) {
+				if(lineItem.getQuantity() <= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+					
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("greater than equal to")) {
+				if(lineItem.getQuantity() >= Integer.parseInt(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Product Name":
+			String prod_name = lineItem.getProduct();
+			if(condition.equals("equal")) {
+				if(prod_name.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}else if(condition.equals("starts with")) {
+				if(prod_name.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("ends with")) {
+				if(prod_name.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			break;
+		case "Sale Type":
+			String sale_type = order.getSaleType();
+			if(condition.equals("equal")) {
+				if(sale_type.equalsIgnoreCase(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}
+			else if(condition.equals("starts with")) {
+				if(sale_type.startsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			else if(condition.equals("ends with")) {
+				if(sale_type.endsWith(value)) {
+					if(!notFlag) {
+						return true;
+					}
+				}else {
+					if(notFlag==true) {
+						return true;
+					}
+				}
+			}	
+			
+			break;
+		
+			
+		}
+		return false;
+	}
+
+	/**
+	 * @param splitPercentage 
+	 * @param orderLineItem
+	 * @param orderLineItemsSplit
+	 * @param splitRule
+	 */
+	private void assignSplitValues(double splitPercentage, OrderLineItemsXML orderLineItem, OrderLineItemsSplit orderLineItemsSplit,
+			SplitRule splitRule) {
+		logger.debug("SPLIT PERCENTAGE= "+splitPercentage);
+//		double qty = orderLineItem.getQuantity();
+//		logger.debug("QTY= "+qty);
+//		double split_qty = (splitPercentage/100)*qty;
+		logger.debug("SPLIT_QTY= "+splitPercentage);
+		orderLineItemsSplit.setSplitQuantity(splitPercentage);
+		double subTotal = orderLineItem.getSubtotal();
+		logger.debug("SUBTOTAL= "+subTotal);
+		double split_subTotal = (splitPercentage/100)*subTotal;
+		logger.debug("SPLT_SUB_TOTAL= "+split_subTotal);
+		orderLineItemsSplit.setSplitSubTotal(split_subTotal);
+	}
+
+	
+
+	private int getSplitPercentage(String benType, SplitRule splitRule) {
+		
+		List<SplitRuleBeneficiary> beneficiaries = splitRule.getSplitRuleBeneficiary();
+		for(SplitRuleBeneficiary beneficiary : beneficiaries) {
+			if(beneficiary.getBeneficiaryType().equalsIgnoreCase(benType)) {
+				return beneficiary.getSplitPercentage();
+			}
+		}
+		return 0;
+	}
 
 	public static List<OrderRosterXML> parseXML(InputStream is) {
 		

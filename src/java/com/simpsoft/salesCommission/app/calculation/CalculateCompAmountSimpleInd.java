@@ -1,21 +1,17 @@
 package com.simpsoft.salesCommission.app.calculation;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Scanner;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +26,6 @@ import com.simpsoft.salesCommission.app.api.RuleSimpleAPI;
 import com.simpsoft.salesCommission.app.api.SplitRuleAPI;
 import com.simpsoft.salesCommission.app.model.CalculationSimple;
 import com.simpsoft.salesCommission.app.model.Employee;
-import com.simpsoft.salesCommission.app.model.Frequency;
 import com.simpsoft.salesCommission.app.model.OrderDetail;
 import com.simpsoft.salesCommission.app.model.OrderLineItems;
 import com.simpsoft.salesCommission.app.model.OrderLineItemsSplit;
@@ -38,10 +33,7 @@ import com.simpsoft.salesCommission.app.model.QualifyingClause;
 import com.simpsoft.salesCommission.app.model.Rule;
 import com.simpsoft.salesCommission.app.model.RuleAssignment;
 import com.simpsoft.salesCommission.app.model.RuleAssignmentDetails;
-import com.simpsoft.salesCommission.app.model.RuleComposite;
 import com.simpsoft.salesCommission.app.model.RuleSimple;
-
-import javassist.bytecode.Mnemonic;
 
 public class CalculateCompAmountSimpleInd {
 	
@@ -99,7 +91,7 @@ public class CalculateCompAmountSimpleInd {
 		//find rule assignments for all employee
 		findRuleAssgForAllEmp(calcAPI, empAPI, ruleAssAPI, ruleAPI, orderAPI, splitRuleAPI);
 		
-		calcAPI.saveDatesSimpList(startDate, endDate, calcSimpList, empSplitQualMap);
+		calcAPI.saveDatesSimpList(startDate, endDate, calcSimpList, empSplitQualMap,false);
 	}
 
 	/**
@@ -149,7 +141,7 @@ public class CalculateCompAmountSimpleInd {
 						
 						if(valid==true) {						
 							
-							// find the no of times the rule output should be added to the compensation 
+							// find the no of times the rule is qualified to obtain the final compensation amount 
 							// if validity type is repeats
 							if(details.getValidityType().equals("repeats")) {
 								Date planStartDate = details.getStartDate();
@@ -533,7 +525,7 @@ public class CalculateCompAmountSimpleInd {
 														}
 													}
 													
-													Object compAmt= replaceAndCalcCompAmt(newParamValues,formula);
+													Object compAmt= calcAPI.replaceAndCalcCompAmt(newParamValues,formula);
 													
 													// get rule start and end calc dates
 													 for(Map.Entry<Rule, Map<Date,Date>> rule_dates_map : rule_freq_map.entrySet()) {
@@ -599,32 +591,7 @@ public class CalculateCompAmountSimpleInd {
 		
 	}
 
-	private static Object replaceAndCalcCompAmt(ArrayList<Double> paramValues, String formula) throws ScriptException {
-		// print paramValues
-		logger.debug("---PARAM VALUES----");
-		for(int i=0; i<paramValues.size(); i++) {
-			logger.debug("paramVal= "+paramValues.get(i));
-		}
-		
-		
-		
-		// replace parameter and rule output values in formula
-		for(int i=0; i< paramValues.size(); i++) {
-			String val = String.valueOf(paramValues.get(i));
-			 formula= formula.replace("$"+(i+1), val);
-		}
-		
-		//evaluate the formula
-			logger.debug("NEW FORMULA= "+formula);
-			ScriptEngineManager manager = new ScriptEngineManager();
-			ScriptEngine engine = manager.getEngineByName("js");
-			Object result = engine.eval(formula);
-			logger.debug("COMPENSATION AMOUNT= "+result);
-			
-			return result;
-		
-		
-	}
+	
 
 	private static void compareLineItem(CalculationAPI calcAPI,OrderAPI orderAPI,RuleAPI ruleAPI,
 			List<OrderLineItems> qualifiedLineItemsList, Rule rule) {
@@ -685,15 +652,98 @@ public class CalculateCompAmountSimpleInd {
 				// compare list of line items with agg qual clause
 				if(aggQualList.size() > 0 && filteredLineItemsList.size()>0) {
 					int flag=0;
+					
+					for(OrderLineItems items : filteredLineItemsList) {						
+						orderTotal += items.getSubtotal();
+						quantity += items.getQuantity();			
+						
+					}
+					logger.debug("ORDER TOTAL= "+orderTotal);
+					logger.debug("QUANTITY= "+quantity);
+					
+					int maxDiscPercentage=0;
+					int maxDutyPercentage=0;
+					int maxQty = 0;
+					int maxSubTotal = 0;
+					
+					for(OrderLineItems items : filteredLineItemsList) {
+						int discPercentage = items.getDiscountPercentage();
+						int dutyPercentage = items.getDutyPercentage();
+						int itemQty = items.getQuantity();
+						int subTotal = (int) items.getSubtotal();
+						
+						if(discPercentage >= maxDiscPercentage) {
+							maxDiscPercentage = discPercentage;
+						}
+						if(dutyPercentage >= maxDutyPercentage) {
+							maxDutyPercentage = dutyPercentage;
+						}
+						if(itemQty >= maxQty) {
+							maxQty = itemQty;
+						}
+						if(subTotal >= maxSubTotal) {
+							maxSubTotal = subTotal;
+						}
+					}
+					maxValues.put("MaxDiscPercent", maxDiscPercentage);
+					maxValues.put("MaxDutyPercent", maxDutyPercentage);
+					maxValues.put("MaxQty", maxQty);
+					maxValues.put("MaxOrderTotal", maxSubTotal);
+					
+
+					logger.debug("MAXIMUM DISCOUNT PERCENTAGE= "+maxDiscPercentage);
+					logger.debug("MAXIMUM DUTY PERCENTAGE= "+maxDutyPercentage);
+					logger.debug("MAXIMUM QUANTITY= "+maxQty);
+					logger.debug("MAXIMUM ORDER(SUB) TOTAL= "+maxSubTotal);
+					
+					int minDiscPercentage=999999999;
+					int minDutyPercentage=999999999;
+					int minQty = 999999999;
+					int minSubTotal = 999999999;
+					
+					for(OrderLineItems items : filteredLineItemsList) {
+						int discPercentage = items.getDiscountPercentage();
+						int dutyPercentage = items.getDutyPercentage();
+						int itemQty = items.getQuantity();
+						int subTotal = (int) items.getSubtotal();
+						
+						if(discPercentage <= minDiscPercentage) {
+							minDiscPercentage = discPercentage;
+						}
+						if(dutyPercentage <= minDutyPercentage) {
+							minDutyPercentage = dutyPercentage;
+						}
+						if(itemQty <= minQty) {
+							minQty = itemQty;
+						}
+						if(subTotal <= minSubTotal) {
+							minSubTotal = subTotal;
+						}
+					}
+					
+					minValues.put("MinDiscPercent", minDiscPercentage);
+					minValues.put("MinDutyPercent", minDutyPercentage);
+					minValues.put("MinQty", minQty);
+					minValues.put("MinOrderTotal", minSubTotal);
+					
+					logger.debug("MINIMUM DISCOUNT PERCENTAGE= "+minDiscPercentage);
+					logger.debug("MINIMUM DUTY PERCENTAGE= "+minDutyPercentage);
+					logger.debug("MINIMUM QUANTITY= "+minQty);
+					logger.debug("MINIMUM ORDER(SUB) TOTAL= "+minSubTotal);
+					
+					
 					for(QualifyingClause aggClause : aggQualList) {
 						if(aggClause.getAggregateFunctions().getFunctionName().equals("sum")) {
-							
-							for(OrderLineItems items : filteredLineItemsList) {
-								orderTotal += items.getSubtotal();
-								quantity += items.getQuantity();
-							}
-							logger.debug("ORDER TOTAL= "+orderTotal);
-							logger.debug("QUANTITY= "+quantity);
+//							
+//							for(OrderLineItems items : filteredLineItemsList) {
+//								
+//								orderTotal += items.getSubtotal();
+//								quantity += items.getQuantity();
+//								
+//								
+//							}
+//							logger.debug("ORDER TOTAL= "+orderTotal);
+//							logger.debug("QUANTITY= "+quantity);
 							double compareValue = 0;
 							String displayName = aggClause.getFieldList().getDisplayName();
 							boolean notFlag = aggClause.isNotFlag();
@@ -717,34 +767,34 @@ public class CalculateCompAmountSimpleInd {
 						
 						else if(aggClause.getAggregateFunctions().getFunctionName().equals("max")) {
 							
-							int maxDiscPercentage=0;
-							int maxDutyPercentage=0;
-							int maxQty = 0;
-							int maxSubTotal = 0;
-							
-							for(OrderLineItems items : filteredLineItemsList) {
-								int discPercentage = items.getDiscountPercentage();
-								int dutyPercentage = items.getDutyPercentage();
-								int itemQty = items.getQuantity();
-								int subTotal = (int) items.getSubtotal();
-								
-								if(discPercentage >= maxDiscPercentage) {
-									maxDiscPercentage = discPercentage;
-								}
-								if(dutyPercentage >= maxDutyPercentage) {
-									maxDutyPercentage = dutyPercentage;
-								}
-								if(itemQty >= maxQty) {
-									maxQty = itemQty;
-								}
-								if(subTotal >= maxSubTotal) {
-									maxSubTotal = subTotal;
-								}
-							}
-							maxValues.put("MaxDiscPercent", maxDiscPercentage);
-							maxValues.put("MaxDutyPercent", maxDutyPercentage);
-							maxValues.put("MaxQty", maxQty);
-							maxValues.put("MaxOrderTotal", maxSubTotal);
+//							int maxDiscPercentage=0;
+//							int maxDutyPercentage=0;
+//							int maxQty = 0;
+//							int maxSubTotal = 0;
+//							
+//							for(OrderLineItems items : filteredLineItemsList) {
+//								int discPercentage = items.getDiscountPercentage();
+//								int dutyPercentage = items.getDutyPercentage();
+//								int itemQty = items.getQuantity();
+//								int subTotal = (int) items.getSubtotal();
+//								
+//								if(discPercentage >= maxDiscPercentage) {
+//									maxDiscPercentage = discPercentage;
+//								}
+//								if(dutyPercentage >= maxDutyPercentage) {
+//									maxDutyPercentage = dutyPercentage;
+//								}
+//								if(itemQty >= maxQty) {
+//									maxQty = itemQty;
+//								}
+//								if(subTotal >= maxSubTotal) {
+//									maxSubTotal = subTotal;
+//								}
+//							}
+//							maxValues.put("MaxDiscPercent", maxDiscPercentage);
+//							maxValues.put("MaxDutyPercent", maxDutyPercentage);
+//							maxValues.put("MaxQty", maxQty);
+//							maxValues.put("MaxOrderTotal", maxSubTotal);
 							
 							int compareValue = 0;
 							String displayName = aggClause.getFieldList().getDisplayName();
@@ -780,35 +830,35 @@ public class CalculateCompAmountSimpleInd {
 						
 						else if(aggClause.getAggregateFunctions().getFunctionName().equals("min")) {
 							
-							int minDiscPercentage=999999999;
-							int minDutyPercentage=999999999;
-							int minQty = 999999999;
-							int minSubTotal = 999999999;
-							
-							for(OrderLineItems items : filteredLineItemsList) {
-								int discPercentage = items.getDiscountPercentage();
-								int dutyPercentage = items.getDutyPercentage();
-								int itemQty = items.getQuantity();
-								int subTotal = (int) items.getSubtotal();
-								
-								if(discPercentage <= minDiscPercentage) {
-									minDiscPercentage = discPercentage;
-								}
-								if(dutyPercentage <= minDutyPercentage) {
-									minDutyPercentage = dutyPercentage;
-								}
-								if(itemQty <= minQty) {
-									minQty = itemQty;
-								}
-								if(subTotal <= minSubTotal) {
-									minSubTotal = subTotal;
-								}
-							}
-							
-							minValues.put("MinDiscPercent", minDiscPercentage);
-							minValues.put("MinDutyPercent", minDutyPercentage);
-							minValues.put("MinQty", minQty);
-							minValues.put("MinOrderTotal", minSubTotal);
+//							int minDiscPercentage=999999999;
+//							int minDutyPercentage=999999999;
+//							int minQty = 999999999;
+//							int minSubTotal = 999999999;
+//							
+//							for(OrderLineItems items : filteredLineItemsList) {
+//								int discPercentage = items.getDiscountPercentage();
+//								int dutyPercentage = items.getDutyPercentage();
+//								int itemQty = items.getQuantity();
+//								int subTotal = (int) items.getSubtotal();
+//								
+//								if(discPercentage <= minDiscPercentage) {
+//									minDiscPercentage = discPercentage;
+//								}
+//								if(dutyPercentage <= minDutyPercentage) {
+//									minDutyPercentage = dutyPercentage;
+//								}
+//								if(itemQty <= minQty) {
+//									minQty = itemQty;
+//								}
+//								if(subTotal <= minSubTotal) {
+//									minSubTotal = subTotal;
+//								}
+//							}
+//							
+//							minValues.put("MinDiscPercent", minDiscPercentage);
+//							minValues.put("MinDutyPercent", minDutyPercentage);
+//							minValues.put("MinQty", minQty);
+//							minValues.put("MinOrderTotal", minSubTotal);
 							
 							int compareValue = 0;
 							String displayName = aggClause.getFieldList().getDisplayName();

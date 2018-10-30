@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -89,6 +93,7 @@ public class CalculationAPI {
 		return fixedRuleDatesMap;
 		
 	}
+	
 
 	public Map<Date,Date> getFullWeeks(Date planStartDate, Date planEndDate, Date rosterStartDate, Date rosterEndDate) throws ParseException {
 		Date startDate;
@@ -834,7 +839,7 @@ public class CalculationAPI {
 	}
 	
 	
-	public void saveDatesSimpList(Date startdate, Date enddate, List<CalculationSimple> calcSimpList, Map<Employee, Map<OrderLineItemsSplit, Boolean>> empSplitQualMap) {
+	public void saveDatesSimpList(Date startdate, Date enddate, List<CalculationSimple> calcSimpList, Map<Employee, Map<OrderLineItemsSplit, Boolean>> empSplitQualMap, boolean dummyCalcInt) {
 		logger.debug("---IN SAVE DATE METHOD---");
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
@@ -859,7 +864,7 @@ public class CalculationAPI {
 				simple.setCompensationAmount(calculationSimple.getCompensationAmount());
 				simple.setEmployee(calculationSimple.getEmployee());
 				simple.setRule(calculationSimple.getRule());
-				simple.setDummyCalcInternal(false);
+				simple.setDummyCalcInternal(dummyCalcInt);
 				List<CalcDetailsOrderLineItems> calcDetailsOrderLineItems = new ArrayList<>();
 				for(Map.Entry<Employee, Map<OrderLineItemsSplit, Boolean>> entry_main : empSplitQualMap.entrySet()) {
 					if(entry_main.getKey().getId() == calculationSimple.getEmployee().getId()) {
@@ -871,6 +876,14 @@ public class CalculationAPI {
 							logger.debug("ORDER LINE ITEM SPLIT ID= "+entry.getKey().getId());
 							calcDetailsOrderLineItem.setQualificationFlag(entry.getValue());
 							logger.debug("QUALIFICATION FLAG= "+entry.getValue());
+							if(entry.getValue() == true) {
+								calcDetailsOrderLineItem.setCompensationAmount( ((entry.getKey().getSplitQuantity()/100)*(calculationSimple.getCompensationAmount())) );
+								logger.debug("COMP AMOUNT IN CALC_DETAILS_ORDER_LINE_ITEMS= "+((entry.getKey().getSplitQuantity()/100)*(calculationSimple.getCompensationAmount())));
+							}else {
+								calcDetailsOrderLineItem.setCompensationAmount(0);
+								logger.debug("COMP AMOUNT IN CALC_DETAILS_ORDER_LINE_ITEMS= 0");
+							}
+							
 							calcDetailsOrderLineItems.add(calcDetailsOrderLineItem);
 						}
 						simple.setCalcDetailsOrderLineItemsList(calcDetailsOrderLineItems);
@@ -1037,6 +1050,34 @@ public class CalculationAPI {
 		
 		
 		return ruleCalcStartDate.compareTo(lineItemOrderDate) * lineItemOrderDate.compareTo(ruleCalcEndDate) >= 0;
+	}
+	
+	
+	public Object replaceAndCalcCompAmt(ArrayList<Double> paramValues, String formula) throws ScriptException {
+		// print paramValues
+		logger.debug("---PARAM VALUES----");
+		for(int i=0; i<paramValues.size(); i++) {
+			logger.debug("paramVal= "+paramValues.get(i));
+		}
+		
+		
+		
+		// replace parameter and rule output values in formula
+		for(int i=0; i< paramValues.size(); i++) {
+			String val = String.valueOf(paramValues.get(i));
+			 formula= formula.replace("$"+(i+1), val);
+		}
+		
+		//evaluate the formula
+			logger.debug("NEW FORMULA= "+formula);
+			ScriptEngineManager manager = new ScriptEngineManager();
+			ScriptEngine engine = manager.getEngineByName("js");
+			Object result = engine.eval(formula);
+			logger.debug("COMPENSATION AMOUNT= "+result);
+			
+			return result;
+		
+		
 	}
 	
 }

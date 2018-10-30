@@ -307,7 +307,7 @@ table td, table th {
 							size="4">ranks in <input type="radio" Name="rankType"
 							value="Number" ${listRule4.ruleSimple.rankingType=='Number'?'checked':''}>number &nbsp;&nbsp;
 							<input type="radio" Name="rankType"
-							value="percentage" ${listRule4.ruleSimple.rankingType=='Percentage'?'checked':''}>percentage
+							value="percentage" ${listRule4.ruleSimple.rankingType=='percentage'?'checked':''}>percentage
 						</td>
 					</tr>
 					<tr>
